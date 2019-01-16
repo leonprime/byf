@@ -8,7 +8,7 @@ import (
 
 // converts a game into a coverage matrix for solving with DLX
 // this flattens the 2d game board by listing one row after another
-func Game2DCoverageMatrix(g *Game2D) [][]bool {
+func Game2DCoverageMatrix(g *Game2D) *Grid {
 	var rows [][]bool
 	n := len(g.Pieces)
 	for i, piece := range g.Pieces {
@@ -18,13 +18,13 @@ func Game2DCoverageMatrix(g *Game2D) [][]bool {
 			row[i] = true // set piece at index i to 1
 			for y := 0; y < g.h; y++ {
 				for x := 0; x < g.w; x++ {
-					row[y*g.h+x] = grid.Get(x, y)
+					row[n+y*g.w+x] = grid.Get(x, y)
 				}
 			}
 			rows = append(rows, row)
 		}
 	}
-	return rows
+	return &Grid{cells: rows, w: g.w, h: g.h}
 }
 
 // given the dimensions of a 2d game board, returns all uniquely
@@ -45,6 +45,7 @@ func (p *Piece) Positions(w, h int) []*Grid {
 	return grids
 }
 
+// does the actual permutation work for a given shape
 func perms(w, h int, shape *Grid) []*Grid {
 	var grids []*Grid
 	for x := 0; x < w; x++ {
@@ -71,9 +72,7 @@ func printgrids(grids []*Grid) {
 		for y := 0; y < grids[0].h; y++ {
 			for j := i; j < i+5 && j < len(str); j++ {
 				b.WriteString(str[j][y])
-				b.WriteRune(' ')
-				b.WriteRune(' ')
-				b.WriteRune(' ')
+				b.WriteString("    ")
 			}
 			b.WriteRune('\n')
 		}

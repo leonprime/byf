@@ -18,6 +18,5 @@ func main() {
 	game.LoadPieces("data/pieces.txt")
 	g := game.New2D(5, 3, "otzrI")
 	m := game.Game2DCoverageMatrix(g)
-	fmt.Println(len(m))
-	fmt.Println(len(m[0]))
+	fmt.Println(m)
 }

@@ -55,6 +55,10 @@ func newEmptyGrid(w, h int) *Grid {
 	return &Grid{cells: cells, h: h, w: w}
 }
 
+func (g *Grid) Cells() [][]bool {
+	return g.cells
+}
+
 func (g *Grid) Height() int {
 	return g.h
 }
