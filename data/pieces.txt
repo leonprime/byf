@@ -1,0 +1,72 @@
+piece t
+███
+.█.
+piece r
+██
+█.
+piece o
+█
+piece O
+██
+██
+piece s
+..██
+███.
+piece s
+██..
+.███
+piece z
+.██
+██.
+piece z
+██.
+.██
+piece Z
+.██
+.█.
+██.
+piece Z
+██.
+.█.
+.██
+piece i
+█
+█
+piece I
+█
+█
+█
+piece |
+█
+█
+█
+█
+piece L
+█..
+█..
+███
+piece L
+..█
+..█
+███
+piece p
+██
+██
+█.
+piece p
+██
+██
+.█
+piece Y
+█.
+██
+█.
+█.
+piece Y
+.█
+██
+.█
+.█
+piece n
+███
+█.█
