@@ -1,72 +1,92 @@
 piece t
+rotate 4
 ███
 .█.
 piece r
+rotate 4
 ██
 █.
 piece o
+rotate 0
 █
 piece O
+rotate 0
 ██
 ██
 piece s
+rotate 4
 ..██
 ███.
 piece s
+rotate 4
 ██..
 .███
 piece z
+rotate 2
 .██
 ██.
 piece z
+rotate 2
 ██.
 .██
 piece Z
+rotate 2
 .██
 .█.
 ██.
 piece Z
+rotate 2
 ██.
 .█.
 .██
 piece i
+rotate 2
 █
 █
 piece I
+rotate 2
 █
 █
 █
 piece |
+rotate 2
 █
 █
 █
 █
 piece L
+rotate 4
 █..
 █..
 ███
 piece L
+rotate 4
 ..█
 ..█
 ███
 piece p
+rotate 4
 ██
 ██
 █.
 piece p
+rotate 4
 ██
 ██
 .█
 piece Y
+rotate 4
 █.
 ██
 █.
 █.
 piece Y
+rotate 4
 .█
 ██
 .█
 .█
 piece n
+rotate 4
 ███
 █.█

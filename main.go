@@ -9,12 +9,15 @@ var games = []struct {
 	rows, cols int
 	pieces     string
 }{
-	{3, 5, "otzrI"},
-	{3, 5, "oi|LO"},
+	{5, 3, "otzrI"},
+	{5, 3, "oi|LO"},
 }
 
 func main() {
+	game.SetDebug()
 	game.LoadPieces("data/pieces.txt")
-	g := game.New2D(3, 5, "otzrI")
-	fmt.Println(g)
+	g := game.New2D(5, 3, "otzrI")
+	m := game.Game2DCoverageMatrix(g)
+	fmt.Println(len(m))
+	fmt.Println(len(m[0]))
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"strconv"
 	"strings"
 	"unicode"
 )
@@ -141,6 +142,8 @@ func (g *Grid) String() string {
 type Piece struct {
 	Name   string
 	Shapes []*Grid
+	// # of rotation symmetries
+	Rotate int
 }
 
 func (p *Piece) String() string {
@@ -169,7 +172,12 @@ func ParsePieces(r io.Reader) map[string]*Piece {
 		}
 		name := lines[i][6:7]
 		var shape bytes.Buffer
+		rotate := 0
 		for j := i + 1; j < len(lines) && !strings.HasPrefix(lines[j], "piece"); j++ {
+			if strings.HasPrefix(lines[j], "rotate") {
+				rotate, _ = strconv.Atoi(lines[j][7:8])
+				continue
+			}
 			shape.WriteString(lines[j])
 			shape.WriteRune('\n')
 		}
@@ -177,7 +185,7 @@ func ParsePieces(r io.Reader) map[string]*Piece {
 		if piece, ok := pieces[name]; ok {
 			piece.Shapes = append(piece.Shapes, grid)
 		} else {
-			pieces[name] = &Piece{Name: name, Shapes: []*Grid{grid}}
+			pieces[name] = &Piece{Name: name, Shapes: []*Grid{grid}, Rotate: rotate}
 		}
 	}
 	return pieces

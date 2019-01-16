@@ -69,7 +69,6 @@ func TestGridNotRectangle(t *testing.T) {
 		}
 	}()
 	newGrid(`
-piece k
 ██
 .█
 █.█
@@ -79,17 +78,21 @@ piece k
 func TestParsePieces(t *testing.T) {
 	data := `
 piece t
+rotate 9
 ###
 .#.
 piece n
+rotate 2
 .██.
 █..█
 █..█
 piece t
+rotate 3
 ...
 █.█
 `
 	pieces := ParsePieces(strings.NewReader(data))
+
 	pt, ok := pieces["t"]
 	if !ok {
 		t.Fatal("missing t")
@@ -97,6 +100,10 @@ piece t
 	if len(pt.Shapes) != 2 {
 		t.Error("expected 2 t pieces")
 	}
+	if pt.Rotate != 9 {
+		t.Errorf("expected t to have 9 rotations, got %d", pt.Rotate)
+	}
+
 	n, ok := pieces["n"]
 	if !ok {
 		t.Fatal("missing n")
@@ -104,6 +111,10 @@ piece t
 	if len(n.Shapes) != 1 {
 		t.Error("expected 1 n pieces")
 	}
+	if n.Rotate != 2 {
+		t.Errorf("expected n to have 2 rotations, got %d", n.Rotate)
+	}
+
 	tests := []*Grid{
 		pt.Shapes[0],
 		pt.Shapes[1],

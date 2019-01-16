@@ -1,7 +1,30 @@
 package game
 
+import (
+	"bytes"
+	"fmt"
+	"strings"
+)
+
 // converts a game into a coverage matrix for solving with DLX
-func Game2DCoverageMatrix(g *Game2D) {
+// this flattens the 2d game board by listing one row after another
+func Game2DCoverageMatrix(g *Game2D) [][]bool {
+	var rows [][]bool
+	n := len(g.Pieces)
+	for i, piece := range g.Pieces {
+		grids := piece.Positions(g.w, g.h)
+		for _, grid := range grids {
+			row := make([]bool, n+g.w*g.h, n+g.w*g.h)
+			row[i] = true // set piece at index i to 1
+			for y := 0; y < g.h; y++ {
+				for x := 0; x < g.w; x++ {
+					row[y*g.h+x] = grid.Get(x, y)
+				}
+			}
+			rows = append(rows, row)
+		}
+	}
+	return rows
 }
 
 // given the dimensions of a 2d game board, returns all uniquely
@@ -10,12 +33,14 @@ func (p *Piece) Positions(w, h int) []*Grid {
 	var grids []*Grid
 	for _, shape := range p.Shapes {
 		grids = append(grids, perms(w, h, shape)...)
-		shape = shape.Rotate()
-		grids = append(grids, perms(w, h, shape)...)
-		shape = shape.Rotate()
-		grids = append(grids, perms(w, h, shape)...)
-		shape = shape.Rotate()
-		grids = append(grids, perms(w, h, shape)...)
+		for i := 1; i < p.Rotate; i++ {
+			shape = shape.Rotate()
+			grids = append(grids, perms(w, h, shape)...)
+		}
+	}
+	if debug {
+		fmt.Printf("generated %d positions for %s\n", len(grids), p.Name)
+		printgrids(grids)
 	}
 	return grids
 }
@@ -26,9 +51,33 @@ func perms(w, h int, shape *Grid) []*Grid {
 		for y := 0; y < h; y++ {
 			// make a grid with piece at this position
 			grid := newEmptyGrid(w, h)
-			// note that SetSubgrid handles oob conditions with a noop
+			// SetSubgrid handles oob conditions with a noop
 			grid.SetSubgrid(x, y, shape)
+			if !grid.IsEmpty() {
+				grids = append(grids, grid)
+			}
 		}
 	}
 	return grids
+}
+
+func printgrids(grids []*Grid) {
+	var str [][]string
+	for _, grid := range grids {
+		str = append(str, strings.Split(grid.String(), "\n"))
+	}
+	var b bytes.Buffer
+	for i := 0; i < len(str); i += 5 {
+		for y := 0; y < grids[0].h; y++ {
+			for j := i; j < i+5 && j < len(str); j++ {
+				b.WriteString(str[j][y])
+				b.WriteRune(' ')
+				b.WriteRune(' ')
+				b.WriteRune(' ')
+			}
+			b.WriteRune('\n')
+		}
+		b.WriteRune('\n')
+	}
+	fmt.Println(b.String())
 }

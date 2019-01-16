@@ -4,13 +4,19 @@ import (
 	"fmt"
 )
 
-// a 2D game is a set of pieces and the dimensions of the playing area
-type Game2D struct {
-	Pieces     []*Piece
-	rows, cols int
+var debug bool
+
+func SetDebug() {
+	debug = true
 }
 
-func New2D(rows, cols int, pieces_spec string) *Game2D {
+// a 2D game is a set of pieces and the dimensions of the playing area
+type Game2D struct {
+	Pieces []*Piece
+	w, h   int
+}
+
+func New2D(w, h int, pieces_spec string) *Game2D {
 	if Pieces == nil {
 		panic("ensure LoadPieces(file) is called first")
 	}
@@ -24,7 +30,7 @@ func New2D(rows, cols int, pieces_spec string) *Game2D {
 	}
 	return &Game2D{
 		Pieces: pieces,
-		rows:   rows,
-		cols:   cols,
+		w:      w,
+		h:      h,
 	}
 }
