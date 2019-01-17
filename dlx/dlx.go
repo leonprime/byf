@@ -30,7 +30,7 @@ type Column struct {
 
 // given a boolean matrix, builds the corresponding dancing links matrix A
 // for use in DLX search algorithm
-func New(matrix [][]bool, columnNames []string) *DancingLinks {
+func New(matrix [][]bool, columnNames []string, max int, countOnly bool) *DancingLinks {
 	w, h := len(matrix[0]), len(matrix)
 	if len(columnNames) != w {
 		panic("number of column names doesn't match number of matrix columns")
@@ -123,7 +123,7 @@ func New(matrix [][]bool, columnNames []string) *DancingLinks {
 		rowh[y].L = nil
 	}
 
-	dl := &DancingLinks{root: root}
+	dl := &DancingLinks{root: root, max: max, countOnly: countOnly}
 	if debug {
 		fmt.Println(dl)
 	}
@@ -136,11 +136,18 @@ type DancingLinks struct {
 	root      *Column
 	o         []*Node
 	Solutions []Solution
+	max       int  // max solutions to search for (0 is all)
+	N, S      int  // number of solutions found and steps taken
+	countOnly bool // skip generation of Solutions
 }
 
 func (dl *DancingLinks) Search(k int) {
+	dl.S++
 	if dl.root.R == &dl.root.Node {
 		dl.printSolution()
+		return
+	}
+	if dl.max > 0 && dl.N >= dl.max {
 		return
 	}
 	dl.o = append(dl.o, nil)
@@ -167,6 +174,7 @@ func (dl *DancingLinks) Search(k int) {
 
 // method that minimizes branching
 func (dl *DancingLinks) chooseColumn() (c *Column) {
+	dl.S++
 	s := math.MaxInt32
 	for col := dl.root.R; col != &dl.root.Node; col = col.R {
 		if col.C.S < s {
@@ -179,6 +187,7 @@ func (dl *DancingLinks) chooseColumn() (c *Column) {
 
 // remove c from the header list and remove all rows in c's own list from other column lists they are in
 func (dl *DancingLinks) cover(c *Column) {
+	dl.S++
 	if debug {
 		fmt.Printf("covering %s\n", c)
 	}
@@ -195,6 +204,7 @@ func (dl *DancingLinks) cover(c *Column) {
 
 // the meat of the dancing links
 func (dl *DancingLinks) uncover(c *Column) {
+	dl.S++
 	if debug {
 		fmt.Printf("uncovering %s\n", c)
 	}
@@ -253,6 +263,13 @@ func (dl *DancingLinks) printSolution() {
 			buf.WriteRune('\n')
 		}
 		fmt.Println(buf.String())
+	}
+	dl.N++
+	if dl.N%1000 == 0 {
+		fmt.Printf("\rfound %d solutions", dl.N)
+	}
+	if dl.countOnly {
+		return
 	}
 	soln := Solution{}
 	for _, o := range dl.o {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 	"torres.guru/gagne/display"
 	"torres.guru/gagne/dlx"
 	"torres.guru/gagne/game"
@@ -20,19 +21,22 @@ func (g Game) String() string {
 }
 
 func main() {
-	path := flag.String("path", ".", "output path for game solutions")
+	path := flag.String("path", ".", "output path for game solutions.")
+	max := flag.Int("max", 0, "maximum number of solutions to find.  the default, 0, means find all solutions")
 	n := flag.Int("n", 10, "number of solutions to print")
 	debug := flag.Bool("debug", false, "turn on debugging")
 	pieces := flag.String("pieces", "data/pieces.txt", "path to pieces data file")
 	show := flag.Bool("show", false, "print available pieces and quit")
+	countOnly := flag.Bool("countOnly", false, "don't print, just count solutions")
 
 	flag.Usage = func() {
 		f := flag.CommandLine.Output()
 		fmt.Fprintf(f, "Usage: %s [options] w h pieceSpec\n", os.Args[0])
-		fmt.Fprintf(f, "\tw and h are the board width and height\n")
-		fmt.Fprintf(f, "\tpieceSpec is the set of pieces to play with (see data/pieces.txt)\n")
-		fmt.Fprintf(f, "\texample: %s 5 3 otzrI\n", os.Args[0])
-		fmt.Fprintf(f, "\tthe solutions are saved at ${path}/solutions/5x3_otzrI\n")
+		fmt.Fprintf(f, "  w and h are the board width and height\n")
+		fmt.Fprintf(f, "  pieceSpec is the set of pieces to play with (see data/pieces.txt)\n")
+		fmt.Fprintf(f, "Example: %s 5 3 otzrI\n", os.Args[0])
+		fmt.Fprintf(f, "  the solutions are saved at ${path}/solutions/5x3_otzrI\n")
+		fmt.Fprintf(f, "Options:\n")
 		flag.PrintDefaults()
 		os.Exit(2)
 	}
@@ -62,21 +66,20 @@ func main() {
 	}
 
 	g := Game{w: w, h: h, pieceSpec: pieceSpec}
-	g.validate()
-	g.run(*path, *n)
+	g.run(*path, *n, *max, *countOnly)
 }
 
-func (g Game) validate() {
-}
-
-func (g Game) run(path string, n int) {
+func (g Game) run(path string, n, max int, countOnly bool) {
 	board := game.NewBoardGame(g.w, g.h, g.pieceSpec)
-	dl := dlx.New(board.Coverage.M.Cells(), board.Coverage.Columns)
+	dl := dlx.New(board.Coverage.M.Cells(), board.Coverage.Columns, max, countOnly)
+	t := time.Now()
 	dl.Search(0)
+	dur := time.Now().Sub(t)
 
-	s := len(dl.Solutions)
-	fmt.Printf("game \"%s\" has %d solutions\n", g, s)
-	if s == 0 {
+	fmt.Printf("game \"%s\" has %d solutions\n", g, dl.N)
+	fmt.Printf("\ttime taken: %s\n", dur)
+	fmt.Printf("\tsteps: %d\n", dl.S)
+	if dl.N == 0 || countOnly {
 		return
 	}
 
@@ -84,8 +87,8 @@ func (g Game) run(path string, n int) {
 	os.RemoveAll(gamePath)
 	os.MkdirAll(gamePath, os.ModePerm)
 
-	if s < n {
-		n = s
+	if dl.N < n {
+		n = dl.N
 	}
 	for i := 0; i < n; i++ {
 		plays := board.Play(dl.Solutions[i])
@@ -97,4 +100,5 @@ func (g Game) run(path string, n int) {
 		display.Render(board.W, board.H, plays, f)
 		f.Close()
 	}
+	fmt.Printf("wrote the first %d solutions to %s\n", n, gamePath)
 }

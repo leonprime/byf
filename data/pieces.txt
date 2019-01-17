@@ -51,7 +51,7 @@ color 4DB6AC
 .██
 piece i
 rotate 2
-color F57F17
+color FF9800
 █
 █
 piece I
@@ -81,7 +81,7 @@ color 1A237E
 ███
 piece l
 rotate 4
-color F57C00
+color 388E3C
 █.
 █.
 ██
