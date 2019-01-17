@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"torres.guru/gagne/display"
 	"torres.guru/gagne/dlx"
 	"torres.guru/gagne/game"
 )
@@ -15,15 +15,13 @@ var games = []struct {
 }
 
 func main() {
-	game.SetDebug()
+	//game.SetDebug()
 	//dlx.SetDebug()
 
 	game.LoadPieces("data/pieces.txt")
 	g := game.NewBoardGame(5, 3, "otzrI")
 	dl := dlx.New(g.Coverage.M.Cells(), g.Coverage.Columns)
 	dl.Search(0)
-	plays := g.Play(dl.Solutions[0])
-	fmt.Println(plays)
-
-	// TODO rendering
+	plays := g.Play(dl.Solutions[1])
+	display.Render(g.W, g.H, plays)
 }

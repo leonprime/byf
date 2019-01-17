@@ -1,92 +1,124 @@
 piece t
 rotate 4
+color 4DB6AC
 ███
 .█.
 piece r
 rotate 4
+color 5D4037
 ██
 █.
 piece o
 rotate 0
+color d32f2f
 █
 piece O
 rotate 0
+color 8E24AA
 ██
 ██
 piece s
 rotate 4
+color 8E24AA
 ..██
 ███.
 piece s
 rotate 4
+color 8E24AA
 ██..
 .███
 piece z
 rotate 2
+color FFD600
 .██
 ██.
 piece z
 rotate 2
+color FFD600
 ██.
 .██
 piece Z
 rotate 2
+color 4DB6AC
 .██
 .█.
 ██.
 piece Z
 rotate 2
+color 4DB6AC
 ██.
 .█.
 .██
 piece i
 rotate 2
+color F57F17
 █
 █
 piece I
 rotate 2
+color F57C00
 █
 █
 █
 piece |
 rotate 2
+color EC407A
 █
 █
 █
 █
 piece L
 rotate 4
+color 1A237E
 █..
 █..
 ███
 piece L
 rotate 4
+color 1A237E
 ..█
 ..█
 ███
+piece l
+rotate 4
+color F57C00
+█.
+█.
+██
+piece l
+rotate 4
+color F57C00
+.█
+.█
+██
 piece p
 rotate 4
+color EC407A
 ██
 ██
 █.
 piece p
 rotate 4
+color EC407A
 ██
 ██
 .█
 piece Y
 rotate 4
+color 5D4037
 █.
 ██
 █.
 █.
 piece Y
 rotate 4
+color 5D4037
 .█
 ██
 .█
 .█
 piece n
 rotate 4
+color FFD600
 ███
 █.█

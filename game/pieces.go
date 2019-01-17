@@ -193,6 +193,7 @@ type Piece struct {
 	Shapes []*Grid
 	// # of rotation symmetries
 	Rotate int
+	Color  []uint8
 }
 
 func (p *Piece) String() string {
@@ -225,10 +226,26 @@ func ParsePieces(r io.Reader) map[string]*Piece {
 		}
 		name := lines[i][6:7]
 		var shape bytes.Buffer
+		color := make([]uint8, 3, 3)
 		rotate := 0
 		for j := i + 1; j < len(lines) && !strings.HasPrefix(lines[j], "piece"); j++ {
 			if strings.HasPrefix(lines[j], "rotate") {
-				rotate, _ = strconv.Atoi(lines[j][7:8])
+				r, err := strconv.Atoi(lines[j][7:8])
+				if err != nil {
+					panic(fmt.Sprintf("error parsing rotate%s: %s", lines[j], err))
+				}
+				rotate = r
+				continue
+			}
+			if strings.HasPrefix(lines[j], "color") {
+				str := lines[j][6:12]
+				for i := 0; i < 3; i++ {
+					n, err := strconv.ParseUint("0x"+str[i*2:i*2+2], 0, 8)
+					if err != nil {
+						panic(fmt.Sprintf("error parsing color %s: %s", lines[j], err))
+					}
+					color[i] = uint8(n)
+				}
 				continue
 			}
 			shape.WriteString(lines[j])
@@ -238,7 +255,12 @@ func ParsePieces(r io.Reader) map[string]*Piece {
 		if piece, ok := pieces[name]; ok {
 			piece.Shapes = append(piece.Shapes, grid)
 		} else {
-			pieces[name] = &Piece{Name: name, Shapes: []*Grid{grid}, Rotate: rotate}
+			pieces[name] = &Piece{
+				Name:   name,
+				Shapes: []*Grid{grid},
+				Rotate: rotate,
+				Color:  color,
+			}
 		}
 	}
 	return pieces

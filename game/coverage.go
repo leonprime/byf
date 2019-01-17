@@ -20,13 +20,13 @@ func newCoverage(b *BoardGame) *Coverage {
 	)
 	n := len(b.pieces)
 	for i, piece := range b.pieces {
-		grids := piece.Positions(b.w, b.h)
+		grids := piece.Positions(b.W, b.H)
 		for _, grid := range grids {
-			row := make([]bool, n+b.w*b.h, n+b.w*b.h)
+			row := make([]bool, n+b.W*b.H, n+b.W*b.H)
 			row[i] = true // set piece at index i to 1
-			for y := 0; y < b.h; y++ {
-				for x := 0; x < b.w; x++ {
-					row[n+y*b.w+x] = grid.Get(x, y)
+			for y := 0; y < b.H; y++ {
+				for x := 0; x < b.W; x++ {
+					row[n+y*b.W+x] = grid.Get(x, y)
 				}
 			}
 			rows = append(rows, row)
@@ -35,9 +35,9 @@ func newCoverage(b *BoardGame) *Coverage {
 		names = append(names, piece.Name)
 	}
 	// rest of the columns should be named sequentially y*h + x
-	for y := 0; y < b.h; y++ {
-		for x := 0; x < b.w; x++ {
-			names = append(names, fmt.Sprintf("c%d", y*b.h+x))
+	for y := 0; y < b.H; y++ {
+		for x := 0; x < b.W; x++ {
+			names = append(names, fmt.Sprintf("c%d", y*b.H+x))
 		}
 	}
 	return &Coverage{

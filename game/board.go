@@ -11,17 +11,17 @@ func SetDebug() {
 }
 
 type Play struct {
-	piece *Piece
-	grid  *Grid
-	x, y  int
+	Piece *Piece
+	Grid  *Grid
+	X, Y  int
 }
 
 func (p *Play) String() string {
-	return fmt.Sprintf("%s: (%d, %d) w=%d, h=%d\n%s", p.piece.Name, p.x, p.y, p.grid.w, p.grid.h, p.grid)
+	return fmt.Sprintf("%s: (%d, %d) w=%d, h=%d\n%s", p.Piece.Name, p.X, p.Y, p.Grid.w, p.Grid.h, p.Grid)
 }
 
 type BoardGame struct {
-	w, h     int
+	W, H     int
 	pieces   []*Piece
 	Coverage *Coverage
 }
@@ -40,8 +40,8 @@ func NewBoardGame(w, h int, pieces_spec string) *BoardGame {
 	}
 	b := &BoardGame{
 		pieces: pieces,
-		w:      w,
-		h:      h,
+		W:      w,
+		H:      h,
 	}
 	b.Coverage = newCoverage(b)
 	return b
@@ -65,26 +65,23 @@ func (b *BoardGame) play(y int) *Play {
 	// scan for the piece
 	for i := 0; i < p; i++ {
 		if row[i] {
-			play.piece = b.pieces[i]
+			play.Piece = b.pieces[i]
 			break
 		}
 	}
 	//
 	// rebuild the grid from the row
-	grid := newEmptyGrid(b.w, b.h)
+	grid := newEmptyGrid(b.W, b.H)
 	for i := p; i < len(row); i++ {
-		x := (i - p) % b.w
-		y := (i - p) / b.w
+		x := (i - p) % b.W
+		y := (i - p) / b.W
 		grid.Set(x, y, row[i])
-	}
-	if debug {
-		fmt.Println(grid)
 	}
 	//
 	// scan for piece location and extents
 	w, h := 0, 0
 	found := false
-	for y := 0; y < b.h; y++ {
+	for y := 0; y < b.H; y++ {
 		if found {
 			if grid.IsRowEmpty(y) {
 				break
@@ -93,7 +90,7 @@ func (b *BoardGame) play(y int) *Play {
 			}
 		} else {
 			if grid.IsRowEmpty(y) {
-				play.y++
+				play.Y++
 			} else {
 				h++
 				found = true
@@ -101,7 +98,7 @@ func (b *BoardGame) play(y int) *Play {
 		}
 	}
 	found = false
-	for x := 0; x < b.w; x++ {
+	for x := 0; x < b.W; x++ {
 		if found {
 			if grid.IsColEmpty(x) {
 				break
@@ -109,8 +106,8 @@ func (b *BoardGame) play(y int) *Play {
 				w++
 			}
 		} else {
-			if grid.IsRowEmpty(x) {
-				play.x++
+			if grid.IsColEmpty(x) {
+				play.X++
 			} else {
 				w++
 				found = true
@@ -118,9 +115,11 @@ func (b *BoardGame) play(y int) *Play {
 		}
 	}
 	// trim the grid to the subgrid bounding the piece
-	play.grid = grid.GetSubgrid(play.x, play.y, w, h)
+	play.Grid = grid.GetSubgrid(play.X, play.Y, w, h)
 	if debug {
 		fmt.Println(play)
+		fmt.Printf("subset (%d, %d) w=%d, h=%d of:\n", play.X, play.Y, w, h)
+		fmt.Println(grid)
 	}
 	return play
 }
