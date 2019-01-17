@@ -65,8 +65,21 @@ func (g *Grid) Width() int {
 	return g.w
 }
 
-func (g *Grid) Get(x, y int) bool {
+func (g *Grid) IsOOB(x, y int) bool {
 	if x < 0 || y < 0 || x >= g.w || y >= g.h {
+		return true
+	}
+	return false
+}
+
+// test if value is set.  doesn't panic on oob
+func (g *Grid) IsSet(x, y int) bool {
+	return !g.IsOOB(x, y) && g.Get(x, y)
+}
+
+// get value.  panics if oob
+func (g *Grid) Get(x, y int) bool {
+	if g.IsOOB(x, y) {
 		panic(fmt.Sprintf("Grid.Get(%d, %d) is oob: Grid(w=%d, h=%d)", x, y, g.w, g.h))
 	}
 	return g.cells[y][x]

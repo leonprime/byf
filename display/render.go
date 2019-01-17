@@ -10,9 +10,13 @@ import (
 
 const (
 	tile   = 50
-	pad    = 2
+	pad    = 3
 	border = 1
 )
+
+var borderColor = color.RGBA{0xBD, 0xBD, 0xBD, 0xBD}
+
+//var borderColor = color.RGBA{0xB0, 0xBE, 0xC5, 0xFF}
 
 func width(cols int) int {
 	return tile*cols + pad*(cols+1)
@@ -90,25 +94,59 @@ func (g *Graf) drawGrid() {
 	}
 }
 
+type edges struct {
+	u, d, l, r bool
+}
+
 // within a tile, there is a border along the edges and an interior
 // a piece has a border = border
 // the border is on the tile edges
-func (g *Graf) drawTile(x, y int, c, b color.Color, u, d, l, r bool) {
+func (g *Graf) drawTile(x, y int, tc color.Color, b edges) {
 	t := tileRect(x, y)
-	g.c = c
+	g.c = tc
 	g.DrawRect(t.Min.X, t.Min.Y, t.Max.X, t.Max.Y)
-	g.c = b
-	if u {
+
+	// connected edges
+	if !b.u {
+		g.DrawRect(t.Min.X, t.Min.Y-pad, t.Max.X, t.Min.Y)
+	}
+	if !b.d {
+		g.DrawRect(t.Min.X, t.Max.Y, t.Max.X, t.Max.Y+pad)
+	}
+	if !b.l {
+		g.DrawRect(t.Min.X-pad, t.Min.Y, t.Min.X, t.Max.Y)
+	}
+	if !b.r {
+		g.DrawRect(t.Max.X, t.Min.Y, t.Max.X+pad, t.Max.Y)
+	}
+}
+
+func (g *Graf) drawBorders(x, y int, bc color.Color, b edges) {
+	t := tileRect(x, y)
+	g.c = bc
+	if b.u {
 		g.DrawRect(t.Min.X, t.Min.Y, t.Max.X, t.Min.Y+border)
+	} else {
+		g.DrawRect(t.Min.X, t.Min.Y-pad-border, t.Min.X+border, t.Min.Y)
+		g.DrawRect(t.Max.X-border, t.Min.Y-pad-border, t.Max.X, t.Min.Y)
 	}
-	if d {
+	if b.d {
 		g.DrawRect(t.Min.X, t.Max.Y-border, t.Max.X, t.Max.Y)
+	} else {
+		g.DrawRect(t.Min.X, t.Max.Y, t.Min.X+border, t.Max.Y+pad+border)
+		g.DrawRect(t.Max.X-border, t.Max.Y, t.Max.X, t.Max.Y+pad+border)
 	}
-	if l {
+	if b.l {
 		g.DrawRect(t.Min.X, t.Min.Y, t.Min.X+border, t.Max.Y)
+	} else {
+		g.DrawRect(t.Min.X-pad-border, t.Min.Y, t.Min.X, t.Min.Y+border)
+		g.DrawRect(t.Min.X-pad-border, t.Max.Y-border, t.Min.X, t.Max.Y)
 	}
-	if r {
+	if b.r {
 		g.DrawRect(t.Max.X-border, t.Min.Y, t.Max.X, t.Max.Y)
+	} else {
+		g.DrawRect(t.Max.X, t.Min.Y, t.Max.X+pad+border, t.Min.Y+border)
+		g.DrawRect(t.Max.X, t.Max.Y-border, t.Max.X+pad+border, t.Max.Y)
 	}
 }
 
@@ -119,10 +157,28 @@ func (g *Graf) drawPlay(play *Play) {
 		play.Piece.Color[2],
 		255,
 	}
+	eachTile(play, pcol, g.drawTile)
+	eachTile(play, borderColor, g.drawBorders)
+}
+
+func eachTile(play *Play, c color.Color, draw func(int, int, color.Color, edges)) {
 	for x := 0; x < play.Grid.Width(); x++ {
 		for y := 0; y < play.Grid.Height(); y++ {
 			if play.Grid.Get(x, y) {
-				g.drawTile(play.X+x, play.Y+y, pcol, color.Black, false, false, false, false)
+				b := edges{true, true, true, true}
+				if play.Grid.IsSet(x, y-1) {
+					b.u = false
+				}
+				if play.Grid.IsSet(x, y+1) {
+					b.d = false
+				}
+				if play.Grid.IsSet(x-1, y) {
+					b.l = false
+				}
+				if play.Grid.IsSet(x+1, y) {
+					b.r = false
+				}
+				draw(play.X+x, play.Y+y, c, b)
 			}
 		}
 	}
