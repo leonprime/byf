@@ -8,7 +8,7 @@ import (
 
 // converts a game into a coverage matrix for solving with DLX
 // this flattens the 2d game board by listing one row after another
-func Game2DCoverageMatrix(g *Game2D) *Grid {
+func Game2DCoverageMatrix(g *Game2D) (_ *Grid, names []string) {
 	var rows [][]bool
 	n := len(g.Pieces)
 	for i, piece := range g.Pieces {
@@ -23,8 +23,16 @@ func Game2DCoverageMatrix(g *Game2D) *Grid {
 			}
 			rows = append(rows, row)
 		}
+		// also set the name
+		names = append(names, piece.Name)
 	}
-	return &Grid{cells: rows, w: g.w, h: g.h}
+	// rest of the columns should be named sequentially y*h + x
+	for y := 0; y < g.h; y++ {
+		for x := 0; x < g.w; x++ {
+			names = append(names, fmt.Sprintf("c%d", y*g.h+x))
+		}
+	}
+	return &Grid{cells: rows, w: len(rows[0]), h: len(rows)}, names
 }
 
 // given the dimensions of a 2d game board, returns all uniquely

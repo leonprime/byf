@@ -16,6 +16,8 @@ type Grid struct {
 	w, h  int
 }
 
+// build a grid from a grid spec, which is a # or █ for true and a . for false
+// put each row on a separate line
 func newGrid(spec string) *Grid {
 	cells := make([][]bool, 0, 0)
 	row := make([]bool, 0, 0)
@@ -47,6 +49,7 @@ func newGrid(spec string) *Grid {
 	return &Grid{cells: cells, w: w, h: len(cells)}
 }
 
+// returns grid set to false
 func newEmptyGrid(w, h int) *Grid {
 	cells := make([][]bool, h, h)
 	for y := range cells {
@@ -128,6 +131,20 @@ func (g *Grid) Rotate() *Grid {
 	}
 }
 
+func (g *Grid) Row(y int) *Grid {
+	var cells [][]bool
+	row := make([]bool, g.w, g.w)
+	for x := 0; x < g.w; x++ {
+		row[x] = g.Get(x, y)
+	}
+	cells = append(cells, row)
+	return &Grid{
+		cells: cells,
+		w:     g.h,
+		h:     1,
+	}
+}
+
 func (g *Grid) String() string {
 	var s bytes.Buffer
 	for y := range g.cells {
@@ -160,6 +177,10 @@ func (p *Piece) String() string {
 	return s.String()
 }
 
+// parses pieces from a piece spec
+// a piece definition starts with "piece x" where x is the single character name of the piece
+// followed by a single grid representing the piece.
+// rotation symmetries are specified with "rotate n".  default is 0 (no rotation symmetries)
 func ParsePieces(r io.Reader) map[string]*Piece {
 	pieces := make(map[string]*Piece)
 	var lines []string
@@ -197,6 +218,7 @@ func ParsePieces(r io.Reader) map[string]*Piece {
 
 var Pieces map[string]*Piece
 
+// parse pieces from a file
 func LoadPieces(fileName string) {
 	b, err := ioutil.ReadFile(fileName)
 	if err != nil {
