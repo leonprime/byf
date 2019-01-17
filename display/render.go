@@ -4,7 +4,7 @@ import (
 	. "image"
 	"image/color"
 	"image/png"
-	"os"
+	"io"
 	. "torres.guru/gagne/game"
 )
 
@@ -35,7 +35,7 @@ func tileRect(x, y int) Rectangle {
 
 // input w and h of the grid and the plays
 // renders the board to a png
-func Render(w, h int, plays []*Play) {
+func Render(w, h int, plays []*Play, out io.Writer) {
 	g := &Graf{
 		img: NewRGBA(Rect(0, 0, width(w), height(h))),
 	}
@@ -43,7 +43,7 @@ func Render(w, h int, plays []*Play) {
 	for _, play := range plays {
 		g.drawPlay(play)
 	}
-	g.save()
+	g.save(out)
 }
 
 type Graf struct {
@@ -51,15 +51,8 @@ type Graf struct {
 	c   color.Color
 }
 
-func (g *Graf) save() {
-	f, err := os.Create("/Users/leon/Desktop/game.png")
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-	if err := png.Encode(f, g.img); err != nil {
-		panic(err)
-	}
+func (g *Graf) save(w io.Writer) error {
+	return png.Encode(w, g.img)
 }
 
 func (g *Graf) HLine(x1, y, x2 int) {
