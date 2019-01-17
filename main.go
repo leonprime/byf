@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"torres.guru/gagne/dlx"
 	"torres.guru/gagne/game"
 )
@@ -19,18 +18,7 @@ func main() {
 	//dlx.SetDebug()
 
 	game.LoadPieces("data/pieces.txt")
-	g := game.New2D(5, 3, "otzrI")
-	m, names := game.Game2DCoverageMatrix(g)
-	dl := dlx.New(m.Cells(), names)
+	b := game.NewBoardGame(5, 3, "otzrI")
+	dl := dlx.New(b.Coverage.M.Cells(), b.Coverage.Columns)
 	dl.Search(0)
-
-	// TODO: now transform solution back into a visual representation
-	for _, soln := range dl.Solutions {
-		fmt.Println(names)
-		for _, y := range soln {
-			fmt.Printf("row %d\n", y)
-			fmt.Println(m.Row(y))
-		}
-		break
-	}
 }

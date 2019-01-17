@@ -6,19 +6,27 @@ import (
 	"strings"
 )
 
-// converts a game into a coverage matrix for solving with DLX
+type Coverage struct {
+	Columns []string
+	M       *Grid
+}
+
+// converts a board game into a coverage matrix for solving with DLX
 // this flattens the 2d game board by listing one row after another
-func Game2DCoverageMatrix(g *Game2D) (_ *Grid, names []string) {
-	var rows [][]bool
-	n := len(g.Pieces)
-	for i, piece := range g.Pieces {
-		grids := piece.Positions(g.w, g.h)
+func newCoverage(b *BoardGame) *Coverage {
+	var (
+		rows  [][]bool
+		names []string
+	)
+	n := len(b.pieces)
+	for i, piece := range b.pieces {
+		grids := piece.Positions(b.w, b.h)
 		for _, grid := range grids {
-			row := make([]bool, n+g.w*g.h, n+g.w*g.h)
+			row := make([]bool, n+b.w*b.h, n+b.w*b.h)
 			row[i] = true // set piece at index i to 1
-			for y := 0; y < g.h; y++ {
-				for x := 0; x < g.w; x++ {
-					row[n+y*g.w+x] = grid.Get(x, y)
+			for y := 0; y < b.h; y++ {
+				for x := 0; x < b.w; x++ {
+					row[n+y*b.w+x] = grid.Get(x, y)
 				}
 			}
 			rows = append(rows, row)
@@ -27,16 +35,19 @@ func Game2DCoverageMatrix(g *Game2D) (_ *Grid, names []string) {
 		names = append(names, piece.Name)
 	}
 	// rest of the columns should be named sequentially y*h + x
-	for y := 0; y < g.h; y++ {
-		for x := 0; x < g.w; x++ {
-			names = append(names, fmt.Sprintf("c%d", y*g.h+x))
+	for y := 0; y < b.h; y++ {
+		for x := 0; x < b.w; x++ {
+			names = append(names, fmt.Sprintf("c%d", y*b.h+x))
 		}
 	}
-	return &Grid{cells: rows, w: len(rows[0]), h: len(rows)}, names
+	return &Coverage{
+		M:       &Grid{cells: rows, w: len(rows[0]), h: len(rows)},
+		Columns: names,
+	}
 }
 
-// given the dimensions of a 2d game board, returns all uniquely
-// oriented positions of a piece on the game board
+// returns all uniquely oriented positions of the piece
+// on a 2d game board reprsented by (w, h),
 func (p *Piece) Positions(w, h int) []*Grid {
 	var grids []*Grid
 	for _, shape := range p.Shapes {

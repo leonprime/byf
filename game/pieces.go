@@ -216,7 +216,7 @@ func ParsePieces(r io.Reader) map[string]*Piece {
 	return pieces
 }
 
-var Pieces map[string]*Piece
+var allPieces map[string]*Piece
 
 // parse pieces from a file
 func LoadPieces(fileName string) {
@@ -224,5 +224,5 @@ func LoadPieces(fileName string) {
 	if err != nil {
 		panic(err)
 	}
-	Pieces = ParsePieces(bytes.NewReader(b))
+	allPieces = ParsePieces(bytes.NewReader(b))
 }
