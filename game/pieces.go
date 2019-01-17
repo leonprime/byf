@@ -98,3 +98,11 @@ func LoadPieces(fileName string) {
 	}
 	allPieces = ParsePieces(bytes.NewReader(b))
 }
+
+func AllPieces() []*Piece {
+	var pieces []*Piece
+	for _, piece := range allPieces {
+		pieces = append(pieces, piece)
+	}
+	return pieces
+}

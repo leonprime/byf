@@ -23,6 +23,8 @@ func main() {
 	path := flag.String("path", ".", "output path for game solutions")
 	n := flag.Int("n", 10, "number of solutions to print")
 	debug := flag.Bool("debug", false, "turn on debugging")
+	pieces := flag.String("pieces", "data/pieces.txt", "path to pieces data file")
+	show := flag.Bool("show", false, "print available pieces and quit")
 
 	flag.Usage = func() {
 		f := flag.CommandLine.Output()
@@ -35,6 +37,14 @@ func main() {
 		os.Exit(2)
 	}
 	flag.Parse()
+
+	game.LoadPieces(*pieces)
+	if *show {
+		for _, piece := range game.AllPieces() {
+			fmt.Println(piece)
+		}
+		return
+	}
 
 	if *debug {
 		game.SetDebug()
@@ -60,19 +70,22 @@ func (g Game) validate() {
 }
 
 func (g Game) run(path string, n int) {
-	game.LoadPieces("data/pieces.txt")
 	board := game.NewBoardGame(g.w, g.h, g.pieceSpec)
 	dl := dlx.New(board.Coverage.M.Cells(), board.Coverage.Columns)
 	dl.Search(0)
 
-	fmt.Printf("game \"%s\" has %d solutions\n", g, len(dl.Solutions))
+	s := len(dl.Solutions)
+	fmt.Printf("game \"%s\" has %d solutions\n", g, s)
+	if s == 0 {
+		return
+	}
 
 	gamePath := fmt.Sprintf("%s/solutions/%s", path, g)
 	os.RemoveAll(gamePath)
 	os.MkdirAll(gamePath, os.ModePerm)
 
-	if len(dl.Solutions) < n {
-		n = len(dl.Solutions)
+	if s < n {
+		n = s
 	}
 	for i := 0; i < n; i++ {
 		plays := board.Play(dl.Solutions[i])
