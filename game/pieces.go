@@ -105,11 +105,27 @@ func (g *Grid) SetSubgrid(x, y int, grid *Grid) {
 	}
 	for yy, j := 0, y; yy < h; yy++ {
 		for xx, i := 0, x; xx < w; xx++ {
+			// TODO: try g.Set() as GetSubgrid does
 			g.cells[j][i] = grid.Get(xx, yy)
 			i++
 		}
 		j++
 	}
+}
+
+func (g *Grid) GetSubgrid(x, y, w, h int) *Grid {
+	if x+w > g.w || y+h > g.h {
+		panic(fmt.Sprintf("subgrid is oob: (%d, %d) w=%d, h=%d on grid w=%d, h=%d", x, y, w, h, g.w, g.h))
+	}
+	grid := newEmptyGrid(w, h)
+	for yy, j := 0, y; yy < h; yy++ {
+		for xx, i := 0, x; xx < w; xx++ {
+			grid.Set(xx, yy, g.Get(i, j))
+			i++
+		}
+		j++
+	}
+	return grid
 }
 
 // returns a grid that's rotated 90 degrees clockwise
@@ -131,18 +147,30 @@ func (g *Grid) Rotate() *Grid {
 	}
 }
 
-func (g *Grid) Row(y int) *Grid {
-	var cells [][]bool
+func (g *Grid) Row(y int) []bool {
 	row := make([]bool, g.w, g.w)
 	for x := 0; x < g.w; x++ {
 		row[x] = g.Get(x, y)
 	}
-	cells = append(cells, row)
-	return &Grid{
-		cells: cells,
-		w:     g.h,
-		h:     1,
+	return row
+}
+
+func (g *Grid) IsRowEmpty(y int) bool {
+	for x := 0; x < g.w; x++ {
+		if g.Get(x, y) {
+			return false
+		}
 	}
+	return true
+}
+
+func (g *Grid) IsColEmpty(x int) bool {
+	for y := 0; y < g.h; y++ {
+		if g.Get(x, y) {
+			return false
+		}
+	}
+	return true
 }
 
 func (g *Grid) String() string {
