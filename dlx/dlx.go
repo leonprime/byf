@@ -28,6 +28,17 @@ type Column struct {
 	S int
 }
 
+type Solution []int
+
+type DancingLinks struct {
+	root      *Column
+	o         []*Node
+	Solutions []Solution
+	max       int  // max solutions to search for (0 is all)
+	N, S      int  // number of solutions found and steps taken
+	countOnly bool // skip generation of Solutions
+}
+
 // given a boolean matrix, builds the corresponding dancing links matrix A
 // for use in DLX search algorithm
 func New(matrix [][]bool, columnNames []string, max int, countOnly bool) *DancingLinks {
@@ -94,7 +105,7 @@ func New(matrix [][]bool, columnNames []string, max int, countOnly bool) *Dancin
 		cols[x].S = sizes[x]
 	}
 
-	// to complete the L/R links for nodes, we build a fake row header
+	// to complete the L/R links for nodes, we build a fake column that acts as a header
 	rowh := make([]*Node, 0, 0)
 	links = make([]*Node, 0, 0)
 	for y := 0; y < h; y++ {
@@ -130,18 +141,11 @@ func New(matrix [][]bool, columnNames []string, max int, countOnly bool) *Dancin
 	return dl
 }
 
-type Solution []int
-
-type DancingLinks struct {
-	root      *Column
-	o         []*Node
-	Solutions []Solution
-	max       int  // max solutions to search for (0 is all)
-	N, S      int  // number of solutions found and steps taken
-	countOnly bool // skip generation of Solutions
-}
-
+// DLX search(k) algorithm
 func (dl *DancingLinks) Search(k int) {
+	if debug {
+		fmt.Printf("k is %d\n", k)
+	}
 	dl.S++
 	if dl.root.R == &dl.root.Node {
 		dl.printSolution()
@@ -151,11 +155,8 @@ func (dl *DancingLinks) Search(k int) {
 		return
 	}
 	dl.o = append(dl.o, nil)
+
 	c := dl.chooseColumn()
-	if debug {
-		fmt.Printf("k is %d\n", k)
-		fmt.Printf("column choice is %s\n", c)
-	}
 	dl.cover(c)
 	for r := c.D; r != &c.Node; r = r.D {
 		dl.o[k] = r
@@ -182,10 +183,13 @@ func (dl *DancingLinks) chooseColumn() (c *Column) {
 			s = col.C.S
 		}
 	}
+	if debug {
+		fmt.Printf("column choice is %s\n", c)
+	}
 	return
 }
 
-// remove c from the header list and remove all rows in c's own list from other column lists they are in
+// cover: unlinks c from header list and remove all rows in c's own list from other column lists they are in
 func (dl *DancingLinks) cover(c *Column) {
 	dl.S++
 	if debug {
@@ -202,7 +206,7 @@ func (dl *DancingLinks) cover(c *Column) {
 	}
 }
 
-// the meat of the dancing links
+// uncover: the meat of the dancing links
 func (dl *DancingLinks) uncover(c *Column) {
 	dl.S++
 	if debug {

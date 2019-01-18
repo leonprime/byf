@@ -23,7 +23,7 @@ func (g Game) String() string {
 func main() {
 	path := flag.String("path", ".", "output path for game solutions.")
 	max := flag.Int("max", 0, "maximum number of solutions to find.  the default, 0, means find all solutions")
-	n := flag.Int("n", 10, "number of solutions to print")
+	nprint := flag.Int("print", 10, "number of solutions to print")
 	debug := flag.Bool("debug", false, "turn on debugging")
 	pieces := flag.String("pieces", "data/pieces.txt", "path to pieces data file")
 	show := flag.Bool("show", false, "print available pieces and quit")
@@ -34,8 +34,8 @@ func main() {
 		fmt.Fprintf(f, "Usage: %s [options] w h pieceSpec\n", os.Args[0])
 		fmt.Fprintf(f, "  w and h are the board width and height\n")
 		fmt.Fprintf(f, "  pieceSpec is the set of pieces to play with (see data/pieces.txt)\n")
-		fmt.Fprintf(f, "Example: %s 5 3 otzrI\n", os.Args[0])
-		fmt.Fprintf(f, "  the solutions are saved at ${path}/solutions/5x3_otzrI\n")
+		fmt.Fprintf(f, "Example: %s 5 3 otzvI\n", os.Args[0])
+		fmt.Fprintf(f, "  the solutions are saved at ${path}/solutions/5x3_otzvI\n")
 		fmt.Fprintf(f, "Options:\n")
 		flag.PrintDefaults()
 		os.Exit(2)
@@ -66,10 +66,10 @@ func main() {
 	}
 
 	g := Game{w: w, h: h, pieceSpec: pieceSpec}
-	g.run(*path, *n, *max, *countOnly)
+	g.run(*path, *nprint, *max, *countOnly)
 }
 
-func (g Game) run(path string, n, max int, countOnly bool) {
+func (g Game) run(path string, nprint, max int, countOnly bool) {
 	board := game.NewBoardGame(g.w, g.h, g.pieceSpec)
 	dl := dlx.New(board.Coverage.M.Cells(), board.Coverage.Columns, max, countOnly)
 	t := time.Now()
@@ -87,10 +87,10 @@ func (g Game) run(path string, n, max int, countOnly bool) {
 	os.RemoveAll(gamePath)
 	os.MkdirAll(gamePath, os.ModePerm)
 
-	if dl.N < n {
-		n = dl.N
+	if dl.N < nprint {
+		nprint = dl.N
 	}
-	for i := 0; i < n; i++ {
+	for i := 0; i < nprint; i++ {
 		plays := board.Play(dl.Solutions[i])
 		filename := fmt.Sprintf("%s/%d.png", gamePath, i)
 		f, err := os.Create(filename)
@@ -100,5 +100,9 @@ func (g Game) run(path string, n, max int, countOnly bool) {
 		display.Render(board.W, board.H, plays, f)
 		f.Close()
 	}
-	fmt.Printf("wrote the first %d solutions to %s\n", n, gamePath)
+	quant := "the first"
+	if dl.N == nprint {
+		quant = "all"
+	}
+	fmt.Printf("wrote %s %d solutions to %s\n", quant, nprint, gamePath)
 }
