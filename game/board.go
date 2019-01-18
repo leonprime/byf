@@ -26,24 +26,13 @@ type Board struct {
 	Coverage *Coverage
 }
 
-func NewBoard(w, h int, pieces_spec string) *Board {
-	if allPieces == nil {
-		panic("ensure LoadPieces(file) is called first")
-	}
-	var pieces []*Piece
-	for _, char := range pieces_spec {
-		if piece, ok := allPieces[string(char)]; ok {
-			pieces = append(pieces, piece)
-		} else {
-			panic(fmt.Sprintf("no piece \"%c\" defined", char))
-		}
-	}
+func NewBoard(w, h int, piecesSpec string) *Board {
 	b := &Board{
-		pieces: pieces,
+		pieces: parsePiecesSpec(piecesSpec),
 		W:      w,
 		H:      h,
 	}
-	b.Coverage = newCoverage(b)
+	b.Coverage = newBoardCoverage(b)
 	return b
 }
 

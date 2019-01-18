@@ -106,3 +106,18 @@ func AllPieces() []*Piece {
 	}
 	return pieces
 }
+
+func parsePiecesSpec(piecesSpec string) []*Piece {
+	if allPieces == nil {
+		panic("ensure LoadPieces(file) is called first")
+	}
+	var pieces []*Piece
+	for _, char := range piecesSpec {
+		if piece, ok := allPieces[string(char)]; ok {
+			pieces = append(pieces, piece)
+		} else {
+			panic(fmt.Sprintf("no piece \"%c\" defined", char))
+		}
+	}
+	return pieces
+}

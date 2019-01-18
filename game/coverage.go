@@ -13,7 +13,7 @@ type Coverage struct {
 
 // converts a board game into a coverage matrix for solving with DLX
 // this flattens the 2d game board by listing one row after another
-func newCoverage(b *Board) *Coverage {
+func newBoardCoverage(b *Board) *Coverage {
 	var (
 		rows  [][]bool
 		names []string
@@ -98,4 +98,72 @@ func printgrids(grids []*Grid) {
 		b.WriteRune('\n')
 	}
 	fmt.Println(b.String())
+}
+
+// converts a cube game into a coverage matrix for solving with DLX
+// this flattens the 3d cube by listing each 2d slice similar to the board
+// coverage, then working front to back in depth
+func newCubeCoverage(c *Cube) *Coverage {
+	var (
+		rows  [][]bool
+		names []string
+	)
+	n := len(c.pieces)
+	for i, piece := range c.pieces {
+		grids := piece.Positions3D(c.W, c.H, c.D)
+		for _, grid := range grids {
+			row := make([]bool, n+c.W*c.H*c.D, n+c.W*c.H*c.D)
+			row[i] = true // set piece at index i to 1
+			for y := 0; y < c.H; y++ {
+				for x := 0; x < c.W; x++ {
+					for z := 0; z < c.D; z++ {
+						row[n+x*c.W*c.H+y*c.W+x] = grid.Get(x, y, z)
+					}
+				}
+			}
+			rows = append(rows, row)
+		}
+		// also set the name
+		names = append(names, piece.Name)
+	}
+	// rest of the columns should be named sequentially z*w*h + y*h + x
+	for y := 0; y < c.H; y++ {
+		for x := 0; x < c.W; x++ {
+			for z := 0; z < c.D; z++ {
+				names = append(names, fmt.Sprintf("c%d", z*c.W*c.H+y*c.H+x))
+			}
+		}
+	}
+	return &Coverage{
+		M:       &Grid{cells: rows, w: len(rows[0]), h: len(rows)},
+		Columns: names,
+	}
+}
+
+// returns all uniquely oriented positions of the piece
+// on a 3d cube reprsented by (w, h, d),
+func (p *Piece) Positions3D(w, h, d int) []*Grid3D {
+	//
+	// the key to this is to use the 2d position permutations and "project" them
+	// down each dimension
+	var grids []*Grid3D
+	grids2d := p.Positions(w, h)
+	for _, grid2d := range grids2d {
+		for x := 0; x < w; x++ {
+			grid := newEmptyGrid3D(w, h, d)
+			grid.SetPlaneYZ(x, grid2d)
+			grids = append(grids, grid)
+		}
+		for y := 0; y < h; y++ {
+			grid := newEmptyGrid3D(w, h, d)
+			grid.SetPlaneXZ(y, grid2d)
+			grids = append(grids, grid)
+		}
+		for z := 0; z < d; z++ {
+			grid := newEmptyGrid3D(w, h, d)
+			grid.SetPlaneXY(z, grid2d)
+			grids = append(grids, grid)
+		}
+	}
+	return grids
 }
