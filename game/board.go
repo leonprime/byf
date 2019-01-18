@@ -4,12 +4,6 @@ import (
 	"fmt"
 )
 
-var debug bool
-
-func SetDebug() {
-	debug = true
-}
-
 type Play struct {
 	Piece *Piece
 	Grid  *Grid
@@ -105,7 +99,7 @@ func (b *Board) play(y int) *Play {
 	}
 	// trim the grid to the subgrid bounding the piece
 	play.Grid = grid.GetSubgrid(play.X, play.Y, w, h)
-	if debug {
+	if debug.piece(play.Piece) {
 		fmt.Println(play)
 		fmt.Printf("subset (%d, %d) w=%d, h=%d of:\n", play.X, play.Y, w, h)
 		fmt.Println(grid)

@@ -59,13 +59,15 @@ func (g *Game3D) String() string {
 }
 
 func main() {
-	path := flag.String("path", ".", "output path for game solutions.")
+	countOnly := flag.Bool("countOnly", false, "don't print, just count solutions")
 	max := flag.Int("max", 0, "maximum number of solutions to find.  the default, 0, means find all solutions")
 	nprint := flag.Int("print", 10, "number of solutions to print")
-	debug := flag.Bool("debug", false, "turn on debugging")
+	path := flag.String("path", ".", "output path for game solutions.")
 	pieces := flag.String("pieces", "data/pieces.txt", "path to pieces data file")
+	debug := flag.Bool("debug", false, "turn on all debugging")
+	debugPiece := flag.String("debugPiece", "", "debug a specific piece")
+	debugDLX := flag.Bool("debugDLX", false, "debug DLX algorithm")
 	show := flag.Bool("show", false, "print available pieces and quit")
-	countOnly := flag.Bool("countOnly", false, "don't print, just count solutions")
 
 	flag.Usage = func() {
 		f := flag.CommandLine.Output()
@@ -123,9 +125,15 @@ func main() {
 		flag.Usage()
 	}
 
+	if *debugPiece != "" {
+		game.SetDebug(*debugPiece)
+	}
+	if *debugDLX {
+		dlx.SetDebug()
+	}
 	if *debug {
-		game.SetDebug()
-		//dlx.SetDebug()
+		game.SetDebugAll()
+		dlx.SetDebug()
 	}
 
 	var g Game

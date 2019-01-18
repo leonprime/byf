@@ -113,7 +113,7 @@ func (c *Cube) play(y int) *Play3D {
 	}
 	// trim the grid to the subgrid bounding the piece
 	play.Grid = grid.GetSubgrid(play.X, play.Y, play.Z, w, h, d)
-	if debug {
+	if debug.piece(play.Piece) {
 		fmt.Println(play)
 		fmt.Printf("subset (%d, %d, %d) w=%d, h=%d, d=%d of:\n", play.X, play.Y, play.Z, w, h, d)
 		fmt.Println(grid)

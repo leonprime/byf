@@ -64,7 +64,7 @@ func (p *Piece) Positions(w, h int) []*Grid {
 			grids = append(grids, perms(w, h, shape)...)
 		}
 	}
-	if debug {
+	if debug.piece(p) {
 		fmt.Printf("generated %d positions for %s\n", len(grids), p.Name)
 		printgrids(grids)
 	}
@@ -133,7 +133,7 @@ func newCubeCoverage(c *Cube) *Coverage {
 		}
 		// also set the name
 		names = append(names, piece.Name)
-		if debug {
+		if debug.piece(piece) {
 			var plays []*Play3D
 			for _, grid := range grids {
 				plays = append(plays, &Play3D{Piece: piece, Grid: grid})
@@ -208,7 +208,7 @@ func (p *Piece) Positions3D(w, h, d int) []*Grid3D {
 			}
 		}
 	}
-	if debug {
+	if debug.piece(p) {
 		fmt.Printf("generated %d 3D positions for %s\n", len(grids), p.Name)
 	}
 	return grids
