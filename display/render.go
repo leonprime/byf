@@ -82,8 +82,7 @@ type edges struct {
 // within a tile, there is a border along the edges and an interior
 // a piece has a border = border
 // the border is on the tile edges
-func (g *Graf) drawTile(x, y int, tc color.Color, b edges) {
-	t := tileRect(x, y)
+func (g *Graf) drawTile(t Rectangle, tc color.Color, b edges) {
 	g.c = tc
 	g.DrawRect(t.Min.X, t.Min.Y, t.Max.X, t.Max.Y)
 
@@ -102,8 +101,7 @@ func (g *Graf) drawTile(x, y int, tc color.Color, b edges) {
 	}
 }
 
-func (g *Graf) drawBorders(x, y int, bc color.Color, b edges) {
-	t := tileRect(x, y)
+func (g *Graf) drawBorders(t Rectangle, bc color.Color, b edges) {
 	g.c = bc
 	if b.u {
 		g.DrawRect(t.Min.X, t.Min.Y, t.Max.X, t.Min.Y+border)
@@ -142,7 +140,7 @@ func (g *Graf) drawPlay(play *Play) {
 	eachTile(play, borderColor, g.drawBorders)
 }
 
-func eachTile(play *Play, c color.Color, draw func(int, int, color.Color, edges)) {
+func eachTile(play *Play, c color.Color, draw func(Rectangle, color.Color, edges)) {
 	for x := 0; x < play.Grid.W; x++ {
 		for y := 0; y < play.Grid.H; y++ {
 			if play.Grid.Get(x, y) {
@@ -159,13 +157,9 @@ func eachTile(play *Play, c color.Color, draw func(int, int, color.Color, edges)
 				if play.Grid.IsSet(x+1, y) {
 					b.r = false
 				}
-				draw(play.X+x, play.Y+y, c, b)
+				t := tileRect(play.X+x, play.Y+y)
+				draw(t, c, b)
 			}
 		}
 	}
 }
-
-// to draw a piece we go left to right then top to bottom
-// we flip state in then out of piece
-// during transition is when we draw the border
-// otherwise when state is in, the padding and border are both the piece color

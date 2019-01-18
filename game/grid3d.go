@@ -23,7 +23,7 @@ func newEmptyGrid3D(w, h, d int) *Grid3D {
 }
 
 func (g *Grid3D) IsOOB(x, y, z int) bool {
-	if x < 0 || y < 0 || z < 9 || x >= g.W || y >= g.H || z > g.D {
+	if x < 0 || y < 0 || z < 0 || x >= g.W || y >= g.H || z > g.D {
 		return true
 	}
 	return false
@@ -54,6 +54,22 @@ func (g *Grid3D) IsEmpty() bool {
 		for y := range g.Cells[z] {
 			for x := range g.Cells[z][y] {
 				if g.Cells[z][y][x] {
+					return false
+				}
+			}
+		}
+	}
+	return true
+}
+
+func (g *Grid3D) Equals(o *Grid3D) bool {
+	if g.W != o.W || g.H != o.H || g.D != o.D {
+		return false
+	}
+	for x := 0; x < g.W; x++ {
+		for y := 0; y < g.H; y++ {
+			for z := 0; z < g.D; z++ {
+				if g.Get(x, y, z) != o.Get(x, y, z) {
 					return false
 				}
 			}
@@ -98,7 +114,40 @@ func (g *Grid3D) GetSubgrid(x, y, z, w, h, d int) *Grid3D {
 	return grid
 }
 
-func (g *Grid3D) SetPlaneXZ(y int, grid *Grid) {
+func (g *Grid3D) IsPlaneEmptyX(x int) bool {
+	for y := 0; y < g.H; y++ {
+		for z := 0; z < g.D; z++ {
+			if g.Get(x, y, z) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func (g *Grid3D) IsPlaneEmptyY(y int) bool {
+	for x := 0; x < g.W; x++ {
+		for z := 0; z < g.D; z++ {
+			if g.Get(x, y, z) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func (g *Grid3D) IsPlaneEmptyZ(z int) bool {
+	for x := 0; x < g.W; x++ {
+		for y := 0; y < g.H; y++ {
+			if g.Get(x, y, z) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func (g *Grid3D) SetPlaneY(y int, grid *Grid) {
 	if !(g.W == g.H && g.H == g.D) {
 		panic("SetPlane called on non-cube grid (yeah, I'm lazy...)")
 	}
@@ -109,7 +158,7 @@ func (g *Grid3D) SetPlaneXZ(y int, grid *Grid) {
 	}
 }
 
-func (g *Grid3D) SetPlaneYZ(x int, grid *Grid) {
+func (g *Grid3D) SetPlaneX(x int, grid *Grid) {
 	if !(g.W == g.H && g.H == g.D) {
 		panic("SetPlane called on non-cube grid (yeah, I'm lazy...)")
 	}
@@ -120,7 +169,7 @@ func (g *Grid3D) SetPlaneYZ(x int, grid *Grid) {
 	}
 }
 
-func (g *Grid3D) SetPlaneXY(z int, grid *Grid) {
+func (g *Grid3D) SetPlaneZ(z int, grid *Grid) {
 	if !(g.W == g.H && g.H == g.D) {
 		panic("SetPlane called on non-cube grid (yeah, I'm lazy...)")
 	}

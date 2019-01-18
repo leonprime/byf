@@ -125,7 +125,7 @@ func main() {
 
 	if *debug {
 		game.SetDebug()
-		dlx.SetDebug()
+		//dlx.SetDebug()
 	}
 
 	var g Game
@@ -139,6 +139,8 @@ func main() {
 
 func run(g Game, path string, nprint, max int, countOnly bool) {
 	cov := g.Coverage()
+	renderDebugs(cov.Debugs, g.String(), path)
+
 	dl := dlx.New(cov.M.Cells, cov.Columns, max, countOnly)
 	t := time.Now()
 	dl.Search(0)
@@ -172,4 +174,29 @@ func run(g Game, path string, nprint, max int, countOnly bool) {
 		quant = "all"
 	}
 	fmt.Printf("wrote %s %d solutions to %s\n", quant, nprint, gamePath)
+}
+
+func renderDebugs(debugs []*game.Debug, gameName, path string) {
+	if len(debugs) == 0 {
+		return
+	}
+	debugPath := fmt.Sprintf("%s/debug/%s", path, gameName)
+	os.RemoveAll(debugPath)
+	os.MkdirAll(debugPath, os.ModePerm)
+	for i, debug := range debugs {
+		// put a number in the name because mac is case insensitive
+		playPath := fmt.Sprintf("%s/%2d_%s", debugPath, i, debug.Name)
+		os.RemoveAll(playPath)
+		os.MkdirAll(playPath, os.ModePerm)
+		for i := range debug.Plays {
+			filename := fmt.Sprintf("%s/play%d.png", playPath, i)
+			f, err := os.Create(filename)
+			if err != nil {
+				panic(err)
+			}
+			display.Render3D(debug.W, debug.H, debug.D, debug.Plays[i:i+1], f)
+			f.Close()
+		}
+	}
+	fmt.Printf("generated %d debuging plays in %s\n", len(debugs), debugPath)
 }

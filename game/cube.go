@@ -37,5 +37,86 @@ func (c *Cube) Play(rows []int) (plays []*Play3D) {
 }
 
 func (c *Cube) play(y int) *Play3D {
-	return nil
+	play := &Play3D{}
+	p := len(c.pieces)
+	row := c.Coverage.M.Row(y)
+	//
+	// scan for the piece
+	for i := 0; i < p; i++ {
+		if row[i] {
+			play.Piece = c.pieces[i]
+			break
+		}
+	}
+	//
+	// rebuild the grid from the flat representation
+	grid := newEmptyGrid3D(c.W, c.H, c.D)
+	for i := p; i < len(row); i++ {
+		x := (i - p) % c.W
+		y := ((i - p) % (c.W * c.H)) / c.W
+		z := (i - p) / (c.W * c.H)
+		grid.Set(x, y, z, row[i])
+	}
+	//
+	// scan for piece location and extents
+	w, h, d := 0, 0, 0
+	found := false
+	for y := 0; y < c.H; y++ {
+		if found {
+			if grid.IsPlaneEmptyY(y) {
+				break
+			} else {
+				h++
+			}
+		} else {
+			if grid.IsPlaneEmptyY(y) {
+				play.Y++
+			} else {
+				h++
+				found = true
+			}
+		}
+	}
+	found = false
+	for x := 0; x < c.W; x++ {
+		if found {
+			if grid.IsPlaneEmptyX(x) {
+				break
+			} else {
+				w++
+			}
+		} else {
+			if grid.IsPlaneEmptyX(x) {
+				play.X++
+			} else {
+				w++
+				found = true
+			}
+		}
+		found = false
+		for z := 0; z < c.D; z++ {
+			if found {
+				if grid.IsPlaneEmptyZ(z) {
+					break
+				} else {
+					d++
+				}
+			} else {
+				if grid.IsPlaneEmptyZ(z) {
+					play.Z++
+				} else {
+					d++
+					found = true
+				}
+			}
+		}
+	}
+	// trim the grid to the subgrid bounding the piece
+	play.Grid = grid.GetSubgrid(play.X, play.Y, play.Z, w, h, d)
+	if debug {
+		fmt.Println(play)
+		fmt.Printf("subset (%d, %d, %d) w=%d, h=%d, d=%d of:\n", play.X, play.Y, play.Z, w, h, d)
+		fmt.Println(grid)
+	}
+	return play
 }

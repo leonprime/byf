@@ -6,9 +6,16 @@ import (
 	"strings"
 )
 
+type Debug struct {
+	Name    string
+	Plays   []*Play3D
+	W, H, D int
+}
+
 type Coverage struct {
 	Columns []string
 	M       *Grid
+	Debugs  []*Debug
 }
 
 // converts a board game into a coverage matrix for solving with DLX
@@ -105,8 +112,9 @@ func printgrids(grids []*Grid) {
 // coverage, then working front to back in depth
 func newCubeCoverage(c *Cube) *Coverage {
 	var (
-		rows  [][]bool
-		names []string
+		rows   [][]bool
+		names  []string
+		debugs []*Debug
 	)
 	n := len(c.pieces)
 	for i, piece := range c.pieces {
@@ -125,6 +133,13 @@ func newCubeCoverage(c *Cube) *Coverage {
 		}
 		// also set the name
 		names = append(names, piece.Name)
+		if debug {
+			var plays []*Play3D
+			for _, grid := range grids {
+				plays = append(plays, &Play3D{Piece: piece, Grid: grid})
+			}
+			debugs = append(debugs, &Debug{Name: fmt.Sprintf("positions_%s", piece.Name), Plays: plays, W: c.W, H: c.H, D: c.D})
+		}
 	}
 	// rest of the columns should be named sequentially z*w*h + y*h + x
 	for y := 0; y < c.H; y++ {
@@ -137,6 +152,7 @@ func newCubeCoverage(c *Cube) *Coverage {
 	return &Coverage{
 		M:       &Grid{Cells: rows, W: len(rows[0]), H: len(rows)},
 		Columns: names,
+		Debugs:  debugs,
 	}
 }
 
@@ -145,25 +161,55 @@ func newCubeCoverage(c *Cube) *Coverage {
 func (p *Piece) Positions3D(w, h, d int) []*Grid3D {
 	//
 	// the key to this is to use the 2d position permutations and "project" them
-	// down each dimension
+	// down each dimension.  this results in duplicates, so must clean that up too
 	var grids []*Grid3D
 	grids2d := p.Positions(w, h)
 	for _, grid2d := range grids2d {
-		for x := 0; x < w; x++ {
+		for z := 0; z < d; z++ {
 			grid := newEmptyGrid3D(w, h, d)
-			grid.SetPlaneYZ(x, grid2d)
-			grids = append(grids, grid)
+			grid.SetPlaneZ(z, grid2d)
+			found := false
+			for _, test := range grids {
+				if grid.Equals(test) {
+					found = true
+					break
+				}
+			}
+			if !found {
+				grids = append(grids, grid)
+			}
 		}
 		for y := 0; y < h; y++ {
 			grid := newEmptyGrid3D(w, h, d)
-			grid.SetPlaneXZ(y, grid2d)
-			grids = append(grids, grid)
+			grid.SetPlaneY(y, grid2d)
+			found := false
+			for _, test := range grids {
+				if grid.Equals(test) {
+					found = true
+					break
+				}
+			}
+			if !found {
+				grids = append(grids, grid)
+			}
 		}
-		for z := 0; z < d; z++ {
+		for x := 0; x < w; x++ {
 			grid := newEmptyGrid3D(w, h, d)
-			grid.SetPlaneXY(z, grid2d)
-			grids = append(grids, grid)
+			grid.SetPlaneX(x, grid2d)
+			found := false
+			for _, test := range grids {
+				if grid.Equals(test) {
+					found = true
+					break
+				}
+			}
+			if !found {
+				grids = append(grids, grid)
+			}
 		}
+	}
+	if debug {
+		fmt.Printf("generated %d 3D positions for %s\n", len(grids), p.Name)
 	}
 	return grids
 }
