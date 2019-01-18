@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"strconv"
 	"time"
@@ -11,13 +12,50 @@ import (
 	"torres.guru/gagne/game"
 )
 
-type Game struct {
-	pieceSpec string
-	w, h      int
+type Game interface {
+	Coverage() *game.Coverage
+	Render(io.Writer, []int)
+	String() string
 }
 
-func (g Game) String() string {
+type Game2D struct {
+	pieceSpec string
+	w, h      int
+	board     *game.Board
+}
+
+func (g *Game2D) Coverage() *game.Coverage {
+	g.board = game.NewBoard(g.w, g.h, g.pieceSpec)
+	return g.board.Coverage
+}
+
+func (g *Game2D) Render(w io.Writer, rows []int) {
+	plays := g.board.Play(rows)
+	display.Render(g.board.W, g.board.H, plays, w)
+}
+
+func (g *Game2D) String() string {
 	return fmt.Sprintf("%dx%d_%s", g.w, g.h, g.pieceSpec)
+}
+
+type Game3D struct {
+	pieceSpec string
+	w, h, d   int
+	cube      *game.Cube
+}
+
+func (g *Game3D) Coverage() *game.Coverage {
+	g.cube = game.NewCube(g.w, g.h, g.d, g.pieceSpec)
+	return g.cube.Coverage
+}
+
+func (g *Game3D) Render(w io.Writer, rows []int) {
+	plays := g.cube.Play(rows)
+	display.Render3D(g.cube.W, g.cube.H, g.cube.D, plays, w)
+}
+
+func (g *Game3D) String() string {
+	return fmt.Sprintf("%dx%dx%d_%s", g.w, g.h, g.d, g.pieceSpec)
 }
 
 func main() {
@@ -50,28 +88,58 @@ func main() {
 		return
 	}
 
+	args := flag.Args()
+	var (
+		dim       int
+		w, h, d   int
+		pieceSpec string
+		err       error
+	)
+	if len(args) == 3 {
+		dim = 2
+		pieceSpec = args[2]
+	} else if len(args) == 4 {
+		dim = 3
+		d, err = strconv.Atoi(args[2])
+		if err != nil {
+			flag.Usage()
+		}
+		pieceSpec = args[3]
+	} else {
+		flag.Usage()
+	}
+	w, err = strconv.Atoi(args[0])
+	if err != nil {
+		flag.Usage()
+	}
+	h, err = strconv.Atoi(args[1])
+	if err != nil {
+		flag.Usage()
+	}
+	if w == 0 || h == 0 || len(pieceSpec) == 0 {
+		flag.Usage()
+	}
+	if dim == 3 && d == 0 {
+		flag.Usage()
+	}
+
 	if *debug {
 		game.SetDebug()
 		dlx.SetDebug()
 	}
 
-	if len(flag.Args()) != 3 {
-		flag.Usage()
+	var g Game
+	if dim == 2 {
+		g = &Game2D{w: w, h: h, pieceSpec: pieceSpec}
+	} else {
+		g = &Game3D{w: w, h: h, d: d, pieceSpec: pieceSpec}
 	}
-	w, _ := strconv.Atoi(flag.Args()[0])
-	h, _ := strconv.Atoi(flag.Args()[1])
-	pieceSpec := flag.Args()[2]
-	if w == 0 || h == 0 || len(pieceSpec) == 0 {
-		flag.Usage()
-	}
-
-	g := Game{w: w, h: h, pieceSpec: pieceSpec}
-	g.run(*path, *nprint, *max, *countOnly)
+	run(g, *path, *nprint, *max, *countOnly)
 }
 
-func (g Game) run(path string, nprint, max int, countOnly bool) {
-	board := game.NewBoard(g.w, g.h, g.pieceSpec)
-	dl := dlx.New(board.Coverage.M.Cells, board.Coverage.Columns, max, countOnly)
+func run(g Game, path string, nprint, max int, countOnly bool) {
+	cov := g.Coverage()
+	dl := dlx.New(cov.M.Cells, cov.Columns, max, countOnly)
 	t := time.Now()
 	dl.Search(0)
 	dur := time.Now().Sub(t)
@@ -91,13 +159,12 @@ func (g Game) run(path string, nprint, max int, countOnly bool) {
 		nprint = dl.N
 	}
 	for i := 0; i < nprint; i++ {
-		plays := board.Play(dl.Solutions[i])
 		filename := fmt.Sprintf("%s/%d.png", gamePath, i)
 		f, err := os.Create(filename)
 		if err != nil {
 			panic(err)
 		}
-		display.Render(board.W, board.H, plays, f)
+		g.Render(f, dl.Solutions[i])
 		f.Close()
 	}
 	quant := "the first"

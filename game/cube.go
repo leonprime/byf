@@ -28,3 +28,14 @@ func NewCube(w, h, d int, piecesSpec string) *Cube {
 	c.Coverage = newCubeCoverage(c)
 	return c
 }
+
+func (c *Cube) Play(rows []int) (plays []*Play3D) {
+	for _, y := range rows {
+		plays = append(plays, c.play(y))
+	}
+	return
+}
+
+func (c *Cube) play(y int) *Play3D {
+	return nil
+}
