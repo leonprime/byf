@@ -70,7 +70,7 @@ func main() {
 }
 
 func (g Game) run(path string, nprint, max int, countOnly bool) {
-	board := game.NewBoardGame(g.w, g.h, g.pieceSpec)
+	board := game.NewBoard(g.w, g.h, g.pieceSpec)
 	dl := dlx.New(board.Coverage.M.Cells(), board.Coverage.Columns, max, countOnly)
 	t := time.Now()
 	dl.Search(0)

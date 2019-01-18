@@ -20,13 +20,13 @@ func (p *Play) String() string {
 	return fmt.Sprintf("%s: (%d, %d) w=%d, h=%d\n%s", p.Piece.Name, p.X, p.Y, p.Grid.w, p.Grid.h, p.Grid)
 }
 
-type BoardGame struct {
+type Board struct {
 	W, H     int
 	pieces   []*Piece
 	Coverage *Coverage
 }
 
-func NewBoardGame(w, h int, pieces_spec string) *BoardGame {
+func NewBoard(w, h int, pieces_spec string) *Board {
 	if allPieces == nil {
 		panic("ensure LoadPieces(file) is called first")
 	}
@@ -38,7 +38,7 @@ func NewBoardGame(w, h int, pieces_spec string) *BoardGame {
 			panic(fmt.Sprintf("no piece \"%c\" defined", char))
 		}
 	}
-	b := &BoardGame{
+	b := &Board{
 		pieces: pieces,
 		W:      w,
 		H:      h,
@@ -50,14 +50,14 @@ func NewBoardGame(w, h int, pieces_spec string) *BoardGame {
 // play the solution by reading the selected rows
 // from the coverage matrix and related data
 // returns a list of play objects that represent the placement of each piece
-func (b *BoardGame) Play(rows []int) (plays []*Play) {
+func (b *Board) Play(rows []int) (plays []*Play) {
 	for _, y := range rows {
 		plays = append(plays, b.play(y))
 	}
 	return
 }
 
-func (b *BoardGame) play(y int) *Play {
+func (b *Board) play(y int) *Play {
 	play := &Play{}
 	p := len(b.pieces)
 	row := b.Coverage.M.Row(y)

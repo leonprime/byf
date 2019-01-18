@@ -13,7 +13,7 @@ type Coverage struct {
 
 // converts a board game into a coverage matrix for solving with DLX
 // this flattens the 2d game board by listing one row after another
-func newCoverage(b *BoardGame) *Coverage {
+func newCoverage(b *Board) *Coverage {
 	var (
 		rows  [][]bool
 		names []string
