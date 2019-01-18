@@ -16,8 +16,6 @@ const (
 
 var borderColor = color.RGBA{0xBD, 0xBD, 0xBD, 0xBD}
 
-//var borderColor = color.RGBA{0xB0, 0xBE, 0xC5, 0xFF}
-
 func width(cols int) int {
 	return tile*cols + pad*(cols+1)
 }
@@ -55,22 +53,12 @@ func (g *Graf) save(w io.Writer) error {
 	return png.Encode(w, g.img)
 }
 
-func (g *Graf) HLine(x1, y, x2 int) {
-	for ; x1 <= x2; x1++ {
-		g.img.Set(x1, y, g.c)
-	}
-}
-
-func (g *Graf) VLine(x, y1, y2 int) {
-	for ; y1 <= y2; y1++ {
-		g.img.Set(x, y1, g.c)
-	}
-}
-
 // Rect draws a filled rectangle
 func (g *Graf) DrawRect(x1, y1, x2, y2 int) {
-	for ; y1 < y2; y1++ {
-		g.HLine(x1, y1, x2)
+	for y := y1; y < y2; y++ {
+		for x := x1; x <= x2; x++ {
+			g.img.Set(x, y, g.c)
+		}
 	}
 }
 
