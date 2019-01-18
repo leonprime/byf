@@ -41,7 +41,7 @@ func newBoardCoverage(b *Board) *Coverage {
 		}
 	}
 	return &Coverage{
-		M:       &Grid{cells: rows, w: len(rows[0]), h: len(rows)},
+		M:       &Grid{Cells: rows, W: len(rows[0]), H: len(rows)},
 		Columns: names,
 	}
 }
@@ -88,7 +88,7 @@ func printgrids(grids []*Grid) {
 	}
 	var b bytes.Buffer
 	for i := 0; i < len(str); i += 5 {
-		for y := 0; y < grids[0].h; y++ {
+		for y := 0; y < grids[0].H; y++ {
 			for j := i; j < i+5 && j < len(str); j++ {
 				b.WriteString(str[j][y])
 				b.WriteString("    ")
@@ -135,7 +135,7 @@ func newCubeCoverage(c *Cube) *Coverage {
 		}
 	}
 	return &Coverage{
-		M:       &Grid{cells: rows, w: len(rows[0]), h: len(rows)},
+		M:       &Grid{Cells: rows, W: len(rows[0]), H: len(rows)},
 		Columns: names,
 	}
 }

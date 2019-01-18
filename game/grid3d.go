@@ -102,8 +102,8 @@ func (g *Grid3D) SetPlaneXZ(y int, grid *Grid) {
 	if !(g.W == g.H && g.H == g.D) {
 		panic("SetPlane called on non-cube grid (yeah, I'm lazy...)")
 	}
-	for j := 0; j < grid.h; j++ {
-		for i := 0; i < grid.w; i++ {
+	for j := 0; j < grid.H; j++ {
+		for i := 0; i < grid.W; i++ {
 			g.Set(i, y, g.D-j-1, grid.Get(i, j))
 		}
 	}
@@ -113,8 +113,8 @@ func (g *Grid3D) SetPlaneYZ(x int, grid *Grid) {
 	if !(g.W == g.H && g.H == g.D) {
 		panic("SetPlane called on non-cube grid (yeah, I'm lazy...)")
 	}
-	for j := 0; j < grid.h; j++ {
-		for i := 0; i < grid.w; i++ {
+	for j := 0; j < grid.H; j++ {
+		for i := 0; i < grid.W; i++ {
 			g.Set(x, j, g.D-i-1, grid.Get(i, j))
 		}
 	}
@@ -124,8 +124,8 @@ func (g *Grid3D) SetPlaneXY(z int, grid *Grid) {
 	if !(g.W == g.H && g.H == g.D) {
 		panic("SetPlane called on non-cube grid (yeah, I'm lazy...)")
 	}
-	for j := 0; j < grid.h; j++ {
-		for i := 0; i < grid.w; i++ {
+	for j := 0; j < grid.H; j++ {
+		for i := 0; i < grid.W; i++ {
 			g.Set(i, j, z, grid.Get(i, j))
 		}
 	}

@@ -143,8 +143,8 @@ func (g *Graf) drawPlay(play *Play) {
 }
 
 func eachTile(play *Play, c color.Color, draw func(int, int, color.Color, edges)) {
-	for x := 0; x < play.Grid.Width(); x++ {
-		for y := 0; y < play.Grid.Height(); y++ {
+	for x := 0; x < play.Grid.W; x++ {
+		for y := 0; y < play.Grid.H; y++ {
 			if play.Grid.Get(x, y) {
 				b := edges{true, true, true, true}
 				if play.Grid.IsSet(x, y-1) {

@@ -19,14 +19,14 @@ piece k
 		{false, true},
 		{false, false},
 	}
-	if g.Height() != len(expect) {
+	if g.H != len(expect) {
 		t.Fatal("unexpected rows")
 	}
-	if g.Width() != len(expect[0]) {
+	if g.W != len(expect[0]) {
 		t.Fatal("unexpected # cols")
 	}
-	for x := 0; x < g.Width(); x++ {
-		for y := 0; y < g.Height(); y++ {
+	for x := 0; x < g.W; x++ {
+		for y := 0; y < g.H; y++ {
 			if expect[y][x] != g.Get(x, y) {
 				t.Fatalf("expected %v at (%d, %d).  Got %v", expect[y][x], x, y, g.Get(x, y))
 			}
@@ -46,14 +46,14 @@ func TestRotateGrid(t *testing.T) {
 		{false, false, true, true},
 		{false, true, false, true},
 	}
-	if g.Height() != len(expect) {
+	if g.H != len(expect) {
 		t.Fatal("unexpected rows")
 	}
-	if g.Width() != len(expect[0]) {
+	if g.W != len(expect[0]) {
 		t.Fatal("unexpected # cols")
 	}
-	for x := 0; x < g.Width(); x++ {
-		for y := 0; y < g.Height(); y++ {
+	for x := 0; x < g.W; x++ {
+		for y := 0; y < g.H; y++ {
 			if expect[y][x] != g.Get(x, y) {
 				t.Fatalf("expected %v at (%d, %d).  Got %v", expect[y][x], x, y, g.Get(x, y))
 			}
@@ -138,8 +138,8 @@ rotate 3
 	for i := 0; i < 3; i++ {
 		g := tests[i]
 		expect := expects[i]
-		for x := 0; x < g.Width(); x++ {
-			for y := 0; y < g.Height(); y++ {
+		for x := 0; x < g.W; x++ {
+			for y := 0; y < g.H; y++ {
 				if expect[y][x] != g.Get(x, y) {
 					t.Fatalf("expected %v at (%d, %d).  Got %v", expect[y][x], x, y, g.Get(x, y))
 				}
@@ -153,7 +153,7 @@ func TestEmpty(t *testing.T) {
 	if !grid.IsEmpty() {
 		t.Fatal("expected empty grid, got non-empty")
 	}
-	grid.cells[2][4] = true
+	grid.Cells[2][4] = true
 	if grid.IsEmpty() {
 		t.Fatal("expected non-empty grid, got empty")
 	}
@@ -189,8 +189,8 @@ func TestSetSubgrid(t *testing.T) {
 		{false, false, true, true, true},
 		{false, false, false, true, false},
 	}
-	for x := 0; x < g.Width(); x++ {
-		for y := 0; y < g.Height(); y++ {
+	for x := 0; x < g.W; x++ {
+		for y := 0; y < g.H; y++ {
 			if expect[y][x] != g.Get(x, y) {
 				t.Fatalf("expected %v at (%d, %d).  Got %v", expect[y][x], x, y, g.Get(x, y))
 			}

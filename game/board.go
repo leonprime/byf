@@ -17,7 +17,7 @@ type Play struct {
 }
 
 func (p *Play) String() string {
-	return fmt.Sprintf("%s: (%d, %d) w=%d, h=%d\n%s", p.Piece.Name, p.X, p.Y, p.Grid.w, p.Grid.h, p.Grid)
+	return fmt.Sprintf("%s: (%d, %d) w=%d, h=%d\n%s", p.Piece.Name, p.X, p.Y, p.Grid.W, p.Grid.H, p.Grid)
 }
 
 type Board struct {
