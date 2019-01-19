@@ -110,6 +110,7 @@ func (g *Grid3D) GetSubgrid(x, y, z, w, h, d int) *Grid3D {
 			}
 			j++
 		}
+		k++
 	}
 	return grid
 }
