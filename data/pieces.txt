@@ -60,7 +60,7 @@ color F57C00
 █
 █
 █
-piece |
+piece l
 rotate 2
 color EC407A
 █
@@ -79,13 +79,13 @@ color 1A237E
 ..█
 ..█
 ███
-piece l
+piece r
 rotate 4
 color 388E3C
 █.
 █.
 ██
-piece l
+piece r
 rotate 4
 color F57C00
 .█
