@@ -10,11 +10,15 @@ import (
 	"strings"
 )
 
+// Game piece.  Instead of generating all symmetries programmatically,
+// we note all pieces are 2D and in a 2D game, pices are either symmetric or
+// have a chirality.  Then, to generate all positional permutations, the only
+// other thing we need are the rotational symmetries.  Furthermore, in a 3D
+// game with 2D pieces, the same symmetries hold along each dimension.
 type Piece struct {
 	Name   string
-	Shapes []*Grid
-	// # of rotation symmetries
-	Rotate int
+	Shapes []*Grid // one shape if symmetrical, two if chiral
+	Rotate int     // # of rotation symmetries
 	Color  []uint8
 }
 
@@ -32,6 +36,7 @@ func (p *Piece) String() string {
 // a piece definition starts with "piece x" where x is the single character name of the piece
 // followed by a single grid representing the piece.
 // rotation symmetries are specified with "rotate n".  default is 0 (no rotation symmetries)
+// color is specified with "color c" where c is a hex RGB value like FF0000
 func ParsePieces(r io.Reader) map[string]*Piece {
 	pieces := make(map[string]*Piece)
 	var lines []string
@@ -107,6 +112,7 @@ func AllPieces() []*Piece {
 	return pieces
 }
 
+// gets the pieces represented by a string of consecutive one-character piece names
 func parsePiecesSpec(piecesSpec string) []*Piece {
 	if allPieces == nil {
 		panic("ensure LoadPieces(file) is called first")

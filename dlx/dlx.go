@@ -28,6 +28,7 @@ type Column struct {
 	S int
 }
 
+// a solution is a selection of rows from the coverage matrix
 type Solution []int
 
 type DancingLinks struct {
@@ -36,10 +37,10 @@ type DancingLinks struct {
 	Solutions []Solution
 	max       int  // max solutions to search for (0 is all)
 	N, S      int  // number of solutions found and steps taken
-	countOnly bool // skip generation of Solutions
+	countOnly bool // don't record Solutions, just count them
 }
 
-// given a boolean matrix, builds the corresponding dancing links matrix A
+// given a boolean matrix, builds the corresponding dancing links cover matrix A
 // for use in DLX search algorithm
 func New(matrix [][]bool, columnNames []string, max int, countOnly bool) *DancingLinks {
 	w, h := len(matrix[0]), len(matrix)
@@ -142,6 +143,7 @@ func New(matrix [][]bool, columnNames []string, max int, countOnly bool) *Dancin
 }
 
 // DLX search(k) algorithm
+// finds all exact covers of a coverage matrix
 func (dl *DancingLinks) Search(k int) {
 	if debug {
 		fmt.Printf("k is %d\n", k)
@@ -173,7 +175,7 @@ func (dl *DancingLinks) Search(k int) {
 	dl.uncover(c)
 }
 
-// method that minimizes branching
+// method with heuristic that minimizes branching
 func (dl *DancingLinks) chooseColumn() (c *Column) {
 	dl.S++
 	s := math.MaxInt32
@@ -206,7 +208,7 @@ func (dl *DancingLinks) cover(c *Column) {
 	}
 }
 
-// uncover: the meat of the dancing links
+// uncover: inverse of cover. the meat of the dancing links
 func (dl *DancingLinks) uncover(c *Column) {
 	dl.S++
 	if debug {

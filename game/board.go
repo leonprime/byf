@@ -4,10 +4,11 @@ import (
 	"fmt"
 )
 
+// a play is a piece that's placed on the board
 type Play struct {
 	Piece *Piece
-	Grid  *Grid
-	X, Y  int
+	Grid  *Grid // piece as oriented on board
+	X, Y  int   // position on board
 }
 
 func (p *Play) String() string {
@@ -30,9 +31,9 @@ func NewBoard(w, h int, piecesSpec string) *Board {
 	return b
 }
 
-// play the solution by reading the selected rows
-// from the coverage matrix and related data
-// returns a list of play objects that represent the placement of each piece
+// play a DLX solution by reading the selected rows
+// from the coverage data
+// returns a list of plays that represent the placement of each piece
 func (b *Board) Play(rows []int) (plays []*Play) {
 	for _, y := range rows {
 		plays = append(plays, b.play(y))
@@ -53,7 +54,7 @@ func (b *Board) play(y int) *Play {
 		}
 	}
 	//
-	// rebuild the grid from the row
+	// rebuild the grid from the coverage row
 	grid := newEmptyGrid(b.W, b.H)
 	for i := p; i < len(row); i++ {
 		x := (i - p) % b.W

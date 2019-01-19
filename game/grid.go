@@ -7,7 +7,7 @@ import (
 )
 
 type Grid struct {
-	Cells [][]bool
+	Cells [][]bool // y, x
 	W, H  int
 }
 

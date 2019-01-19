@@ -6,12 +6,14 @@ import (
 	"strings"
 )
 
+// for debugging 3D
 type Debug struct {
 	Name    string
 	Plays   []*Play3D
 	W, H, D int
 }
 
+// the coverage matrix, its column names, and any coverage debugging
 type Coverage struct {
 	Columns []string
 	M       *Grid
@@ -19,7 +21,7 @@ type Coverage struct {
 }
 
 // converts a board game into a coverage matrix for solving with DLX
-// this flattens the 2d game board by listing one row after another
+// this flattens a 2D game board by listing one row after another
 func newBoardCoverage(b *Board) *Coverage {
 	var (
 		rows  [][]bool
@@ -58,7 +60,7 @@ func newBoardCoverage(b *Board) *Coverage {
 }
 
 // returns all uniquely oriented positions of the piece
-// on a 2d game board reprsented by (w, h),
+// on a 2D game board reprsented by (w, h),
 func (p *Piece) Positions(w, h int) []*Grid {
 	var grids []*Grid
 	for _, shape := range p.Shapes {
@@ -112,8 +114,8 @@ func printgrids(grids []*Grid) {
 }
 
 // converts a cube game into a coverage matrix for solving with DLX
-// this flattens the 3d cube by listing each 2d slice similar to the board
-// coverage, then working front to back in depth
+// this flattens the 3D cube by listing the 2D planes XY as in the board game
+// from front to back in Z
 func newCubeCoverage(c *Cube) *Coverage {
 	var (
 		rows   [][]bool
@@ -168,7 +170,7 @@ func newCubeCoverage(c *Cube) *Coverage {
 // on a 3d cube reprsented by (w, h, d),
 func (p *Piece) Positions3D(w, h, d int) []*Grid3D {
 	//
-	// the key to this is to use the 2d position permutations and "project" them
+	// the key to this is to use the 2D position permutations and "project" them
 	// down each dimension.  this results in duplicates, so must clean that up too
 	var grids []*Grid3D
 	grids2d := p.Positions(w, h)

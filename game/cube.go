@@ -49,7 +49,7 @@ func (c *Cube) play(y int) *Play3D {
 		}
 	}
 	//
-	// rebuild the grid from the flat representation
+	// rebuild the grid from the coverage row
 	grid := newEmptyGrid3D(c.W, c.H, c.D)
 	for i := p; i < len(row); i++ {
 		x := (i - p) % c.W
