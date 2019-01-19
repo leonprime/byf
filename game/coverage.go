@@ -29,11 +29,11 @@ func newBoardCoverage(b *Board) *Coverage {
 	for i, piece := range b.pieces {
 		grids := piece.Positions(b.W, b.H)
 		for _, grid := range grids {
-			row := make([]bool, n+b.W*b.H, n+b.W*b.H)
+			row := make([]bool, n, n)
 			row[i] = true // set piece at index i to 1
 			for y := 0; y < b.H; y++ {
 				for x := 0; x < b.W; x++ {
-					row[n+y*b.W+x] = grid.Get(x, y)
+					row = append(row, grid.Get(x, y))
 				}
 			}
 			rows = append(rows, row)
@@ -47,10 +47,14 @@ func newBoardCoverage(b *Board) *Coverage {
 			names = append(names, fmt.Sprintf("c%d", y*b.H+x))
 		}
 	}
-	return &Coverage{
+	cov := &Coverage{
 		M:       &Grid{Cells: rows, W: len(rows[0]), H: len(rows)},
 		Columns: names,
 	}
+	if debug.coverage() {
+		fmt.Println(cov)
+	}
+	return cov
 }
 
 // returns all uniquely oriented positions of the piece
@@ -120,12 +124,12 @@ func newCubeCoverage(c *Cube) *Coverage {
 	for i, piece := range c.pieces {
 		grids := piece.Positions3D(c.W, c.H, c.D)
 		for _, grid := range grids {
-			row := make([]bool, n+c.W*c.H*c.D, n+c.W*c.H*c.D)
+			row := make([]bool, n, n)
 			row[i] = true // set piece at index i to 1
 			for y := 0; y < c.H; y++ {
 				for x := 0; x < c.W; x++ {
 					for z := 0; z < c.D; z++ {
-						row[n+x*c.W*c.H+y*c.W+x] = grid.Get(x, y, z)
+						row = append(row, grid.Get(x, y, z))
 					}
 				}
 			}
@@ -149,11 +153,15 @@ func newCubeCoverage(c *Cube) *Coverage {
 			}
 		}
 	}
-	return &Coverage{
+	cov := &Coverage{
 		M:       &Grid{Cells: rows, W: len(rows[0]), H: len(rows)},
 		Columns: names,
 		Debugs:  debugs,
 	}
+	if debug.coverage() {
+		fmt.Println(cov)
+	}
+	return cov
 }
 
 // returns all uniquely oriented positions of the piece
@@ -212,4 +220,31 @@ func (p *Piece) Positions3D(w, h, d int) []*Grid3D {
 		fmt.Printf("generated %d 3D positions for %s\n", len(grids), p.Name)
 	}
 	return grids
+}
+
+func (c *Coverage) String() string {
+	var b bytes.Buffer
+	b.WriteString("coverage matrix A:\n")
+	for _, col := range c.Columns {
+		b.WriteString(col)
+		b.WriteString(" ")
+	}
+	b.WriteRune('\n')
+	b.WriteString(c.M.String())
+	return b.String()
+}
+
+func (c *Coverage) RowString(y int) string {
+	var b bytes.Buffer
+	for i, v := range c.M.Row(y) {
+		if i == len(c.Columns) {
+			b.WriteString(" : ")
+		}
+		if v {
+			b.WriteRune('█')
+		} else {
+			b.WriteRune('.')
+		}
+	}
+	return b.String()
 }

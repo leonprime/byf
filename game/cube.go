@@ -57,6 +57,11 @@ func (c *Cube) play(y int) *Play3D {
 		z := (i - p) / (c.W * c.H)
 		grid.Set(x, y, z, row[i])
 	}
+	if debug.piece(play.Piece) {
+		fmt.Printf("%s grid rebuilt from coverage row:\n", play.Piece.Name)
+		fmt.Println(c.Coverage.RowString(y))
+		fmt.Println(grid)
+	}
 	//
 	// scan for piece location and extents
 	w, h, d := 0, 0, 0
@@ -93,30 +98,29 @@ func (c *Cube) play(y int) *Play3D {
 				found = true
 			}
 		}
-		found = false
-		for z := 0; z < c.D; z++ {
-			if found {
-				if grid.IsPlaneEmptyZ(z) {
-					break
-				} else {
-					d++
-				}
+	}
+	found = false
+	for z := 0; z < c.D; z++ {
+		if found {
+			if grid.IsPlaneEmptyZ(z) {
+				break
 			} else {
-				if grid.IsPlaneEmptyZ(z) {
-					play.Z++
-				} else {
-					d++
-					found = true
-				}
+				d++
+			}
+		} else {
+			if grid.IsPlaneEmptyZ(z) {
+				play.Z++
+			} else {
+				d++
+				found = true
 			}
 		}
 	}
 	// trim the grid to the subgrid bounding the piece
 	play.Grid = grid.GetSubgrid(play.X, play.Y, play.Z, w, h, d)
 	if debug.piece(play.Piece) {
+		fmt.Printf("play geometry: (%d, %d, %d) w=%d, h=%d, d=%d\n", play.X, play.Y, play.Z, w, h, d)
 		fmt.Println(play)
-		fmt.Printf("subset (%d, %d, %d) w=%d, h=%d, d=%d of:\n", play.X, play.Y, play.Z, w, h, d)
-		fmt.Println(grid)
 	}
 	return play
 }

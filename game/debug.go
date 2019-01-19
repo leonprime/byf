@@ -1,27 +1,35 @@
 package game
 
-var debug debugOpts
+var debug *debugOpts = &debugOpts{}
 
 type debugOpts struct {
-	p   *Piece
-	all bool
+	cov, allPieces bool
+	p              *Piece
 }
 
-func SetDebug(p string) {
+func SetDebugAllPieces() {
+	debug.allPieces = true
+}
+
+func SetDebugPiece(p string) {
 	if piece, ok := allPieces[p]; ok {
-		debug = debugOpts{p: piece}
+		debug.p = piece
 	} else {
 		panic("piece not found: " + p)
 	}
 }
 
-func SetDebugAll() {
-	debug = debugOpts{all: true}
+func SetDebugCoverage() {
+	debug.cov = true
 }
 
-func (d debugOpts) piece(p *Piece) bool {
-	if d.all {
+func (d *debugOpts) piece(p *Piece) bool {
+	if d.allPieces {
 		return true
 	}
 	return d.p == p
+}
+
+func (d *debugOpts) coverage() bool {
+	return d.cov
 }

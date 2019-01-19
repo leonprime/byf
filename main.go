@@ -65,7 +65,8 @@ func main() {
 	path := flag.String("path", ".", "output path for game solutions.")
 	pieces := flag.String("pieces", "data/pieces.txt", "path to pieces data file")
 	debug := flag.Bool("debug", false, "turn on all debugging")
-	debugPiece := flag.String("debugPiece", "", "debug a specific piece")
+	debugPiece := flag.String("debugPiece", "", "debug a specific piece. specify . for all pieces")
+	debugCoverage := flag.Bool("debugCoverage", false, "debug coverage matrix")
 	debugDLX := flag.Bool("debugDLX", false, "debug DLX algorithm")
 	show := flag.Bool("show", false, "print available pieces and quit")
 
@@ -126,13 +127,21 @@ func main() {
 	}
 
 	if *debugPiece != "" {
-		game.SetDebug(*debugPiece)
+		if *debugPiece == "." {
+			game.SetDebugAllPieces()
+		} else {
+			game.SetDebugPiece(*debugPiece)
+		}
+	}
+	if *debugCoverage {
+		game.SetDebugCoverage()
 	}
 	if *debugDLX {
 		dlx.SetDebug()
 	}
 	if *debug {
-		game.SetDebugAll()
+		game.SetDebugAllPieces()
+		game.SetDebugCoverage()
 		dlx.SetDebug()
 	}
 
