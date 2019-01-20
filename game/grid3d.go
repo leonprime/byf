@@ -149,8 +149,8 @@ func (g *Grid3D) IsPlaneEmptyZ(z int) bool {
 }
 
 func (g *Grid3D) SetPlaneY(y int, grid *Grid) {
-	if !(g.W == g.H && g.H == g.D) {
-		panic("SetPlane called on non-cube grid (yeah, I'm lazy...)")
+	if g.W != grid.W && g.D != grid.H {
+		panic(fmt.Sprintf("SetPlane: plane(w=%d, h=%d) doesn't fit grid(w=%d, h=%d, d=%d) along y axis", grid.W, grid.H, g.W, g.H, g.D))
 	}
 	for j := 0; j < grid.H; j++ {
 		for i := 0; i < grid.W; i++ {
@@ -160,8 +160,8 @@ func (g *Grid3D) SetPlaneY(y int, grid *Grid) {
 }
 
 func (g *Grid3D) SetPlaneX(x int, grid *Grid) {
-	if !(g.W == g.H && g.H == g.D) {
-		panic("SetPlane called on non-cube grid (yeah, I'm lazy...)")
+	if g.H != grid.H && g.D != grid.W {
+		panic(fmt.Sprintf("SetPlane: plane(w=%d, h=%d) doesn't fit grid(w=%d, h=%d, d=%d) along x axis", grid.W, grid.H, g.W, g.H, g.D))
 	}
 	for j := 0; j < grid.H; j++ {
 		for i := 0; i < grid.W; i++ {
@@ -171,8 +171,8 @@ func (g *Grid3D) SetPlaneX(x int, grid *Grid) {
 }
 
 func (g *Grid3D) SetPlaneZ(z int, grid *Grid) {
-	if !(g.W == g.H && g.H == g.D) {
-		panic("SetPlane called on non-cube grid (yeah, I'm lazy...)")
+	if g.W != grid.W && g.H != grid.H {
+		panic(fmt.Sprintf("SetPlane: plane(w=%d, h=%d) doesn't fit grid(w=%d, h=%d, d=%d) along z axis", grid.W, grid.H, g.W, g.H, g.D))
 	}
 	for j := 0; j < grid.H; j++ {
 		for i := 0; i < grid.W; i++ {

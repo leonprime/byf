@@ -30,6 +30,9 @@ func newBoardCoverage(b *Board) *Coverage {
 	n := len(b.pieces)
 	for i, piece := range b.pieces {
 		grids := piece.Positions(b.W, b.H)
+		if debug.piece(piece) {
+			printperms(piece, grids)
+		}
 		for _, grid := range grids {
 			row := make([]bool, n, n)
 			row[i] = true // set piece at index i to 1
@@ -70,10 +73,6 @@ func (p *Piece) Positions(w, h int) []*Grid {
 			grids = append(grids, perms(w, h, shape)...)
 		}
 	}
-	if debug.piece(p) {
-		fmt.Printf("generated %d positions for %s\n", len(grids), p.Name)
-		printgrids(grids)
-	}
 	return grids
 }
 
@@ -94,7 +93,8 @@ func perms(w, h int, shape *Grid) []*Grid {
 	return grids
 }
 
-func printgrids(grids []*Grid) {
+func printperms(p *Piece, grids []*Grid) {
+	fmt.Printf("generated %d positions for %s\n", len(grids), p.Name)
 	var str [][]string
 	for _, grid := range grids {
 		str = append(str, strings.Split(grid.String(), "\n"))
@@ -128,9 +128,9 @@ func newCubeCoverage(c *Cube) *Coverage {
 		for _, grid := range grids {
 			row := make([]bool, n, n)
 			row[i] = true // set piece at index i to 1
-			for y := 0; y < c.H; y++ {
-				for x := 0; x < c.W; x++ {
-					for z := 0; z < c.D; z++ {
+			for z := 0; z < c.D; z++ {
+				for y := 0; y < c.H; y++ {
+					for x := 0; x < c.W; x++ {
 						row = append(row, grid.Get(x, y, z))
 					}
 				}
@@ -170,10 +170,18 @@ func newCubeCoverage(c *Cube) *Coverage {
 // on a 3d cube reprsented by (w, h, d),
 func (p *Piece) Positions3D(w, h, d int) []*Grid3D {
 	//
-	// the key to this is to use the 2D position permutations and "project" them
-	// down each dimension.  this results in duplicates, so must clean that up too
-	var grids []*Grid3D
-	grids2d := p.Positions(w, h)
+	// The key to this is to use the 2D position permutations in each dimension
+	// and "project" them. There can be duplicates, so must clean that up too.
+	var (
+		grids   []*Grid3D
+		grids2d []*Grid
+	)
+	// plane xy down z
+	grids2d = p.Positions(w, h)
+	if debug.piece(p) {
+		fmt.Println("plane xy down z:")
+		printperms(p, grids2d)
+	}
 	for _, grid2d := range grids2d {
 		for z := 0; z < d; z++ {
 			grid := newEmptyGrid3D(w, h, d)
@@ -189,6 +197,14 @@ func (p *Piece) Positions3D(w, h, d int) []*Grid3D {
 				grids = append(grids, grid)
 			}
 		}
+	}
+	// plane xz down y
+	grids2d = p.Positions(w, d)
+	if debug.piece(p) {
+		fmt.Println("plane xz down y:")
+		printperms(p, grids2d)
+	}
+	for _, grid2d := range grids2d {
 		for y := 0; y < h; y++ {
 			grid := newEmptyGrid3D(w, h, d)
 			grid.SetPlaneY(y, grid2d)
@@ -203,6 +219,14 @@ func (p *Piece) Positions3D(w, h, d int) []*Grid3D {
 				grids = append(grids, grid)
 			}
 		}
+	}
+	// plane zy down x
+	grids2d = p.Positions(d, h)
+	if debug.piece(p) {
+		fmt.Println("plane zy down x:")
+		printperms(p, grids2d)
+	}
+	for _, grid2d := range grids2d {
 		for x := 0; x < w; x++ {
 			grid := newEmptyGrid3D(w, h, d)
 			grid.SetPlaneX(x, grid2d)
