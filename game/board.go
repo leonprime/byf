@@ -101,8 +101,8 @@ func (b *Board) play(y int) *Play {
 	// trim the grid to the subgrid bounding the piece
 	play.Grid = grid.GetSubgrid(play.X, play.Y, w, h)
 	if debug.piece(play.Piece) {
+		fmt.Printf("play of %s at (%d, %d) w=%d, h=%d:\n", play.Piece.Name, play.X, play.Y, w, h)
 		fmt.Println(play)
-		fmt.Printf("subset (%d, %d) w=%d, h=%d of:\n", play.X, play.Y, w, h)
 		fmt.Println(grid)
 	}
 	return play

@@ -59,17 +59,18 @@ func (g *Game3D) String() string {
 }
 
 func main() {
-	countOnly := flag.Bool("countOnly", false, "don't print, just count solutions")
+	countOnly := flag.Bool("count", false, "don't print, just count solutions")
 	max := flag.Int("max", 0, "maximum number of solutions to find.  the default, 0, means find all solutions")
 	nprint := flag.Int("print", 10, "number of solutions to print")
 	path := flag.String("path", ".", "output path for game solutions.")
 	pieces := flag.String("pieces", "data/gagne.txt", "path to pieces data file")
 	debug := flag.Bool("debug", false, "turn on all debugging")
-	debugPiece := flag.String("debugPiece", "", "debug a specific piece. specify . for all pieces")
+	debugPiece := flag.String("debugPiece", "", "debug a specific piece")
+	debugAllPieces := flag.Bool("debugAllPieces", false, "debug all pieces")
 	debugCoverage := flag.Bool("debugCoverage", false, "debug coverage matrix")
 	debugDLX := flag.Bool("debugDLX", false, "debug DLX algorithm")
 	show := flag.Bool("show", false, "print available pieces and quit")
-	nochiral := flag.Bool("nochiral", false, "do not include the chiral reflections")
+	nochiral := flag.Bool("nochiral", false, "don't include the chiral reflections. the first one found in data file is used")
 
 	flag.Usage = func() {
 		f := flag.CommandLine.Output()
@@ -128,11 +129,10 @@ func main() {
 	}
 
 	if *debugPiece != "" {
-		if *debugPiece == "." {
-			game.SetDebugAllPieces()
-		} else {
-			game.SetDebugPiece(*debugPiece)
-		}
+		game.SetDebugPiece(*debugPiece)
+	}
+	if *debugAllPieces {
+		game.SetDebugAllPieces()
 	}
 	if *debugCoverage {
 		game.SetDebugCoverage()
