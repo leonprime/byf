@@ -37,7 +37,8 @@ func (p *Piece) String() string {
 // followed by a single grid representing the piece.
 // rotation symmetries are specified with "rotate n".  default is 0 (no rotation symmetries)
 // color is specified with "color c" where c is a hex RGB value like FF0000
-func ParsePieces(r io.Reader) map[string]*Piece {
+// chiral specifies if we're including the flip symmetries of pieces that have chirality
+func ParsePieces(r io.Reader, chiral bool) map[string]*Piece {
 	pieces := make(map[string]*Piece)
 	var lines []string
 	s := bufio.NewScanner(r)
@@ -80,7 +81,9 @@ func ParsePieces(r io.Reader) map[string]*Piece {
 		}
 		grid := newGrid(shape.String())
 		if piece, ok := pieces[name]; ok {
-			piece.Shapes = append(piece.Shapes, grid)
+			if chiral {
+				piece.Shapes = append(piece.Shapes, grid)
+			} // otherwise use the first piece we found
 		} else {
 			pieces[name] = &Piece{
 				Name:   name,
@@ -96,12 +99,12 @@ func ParsePieces(r io.Reader) map[string]*Piece {
 var allPieces map[string]*Piece
 
 // parse pieces from a file
-func LoadPieces(fileName string) {
+func LoadPieces(fileName string, chiral bool) {
 	b, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		panic(err)
 	}
-	allPieces = ParsePieces(bytes.NewReader(b))
+	allPieces = ParsePieces(bytes.NewReader(b), chiral)
 }
 
 func AllPieces() []*Piece {

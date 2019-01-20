@@ -86,26 +86,26 @@ color 1A237E
 piece Y
 rotate 4
 color 5D4037
-.█
+█.
 ██
-.█
-.█
+█.
+█.
 piece Y
 rotate 4
 color 5D4037
-█.
+.█
 ██
-█.
-█.
-piece Z
-rotate 2
-color 4DB6AC
-██.
-.█.
-.██
+.█
+.█
 piece Z
 rotate 2
 color 4DB6AC
 .██
 .█.
 ██.
+piece Z
+rotate 2
+color 4DB6AC
+██.
+.█.
+.██

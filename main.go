@@ -69,6 +69,7 @@ func main() {
 	debugCoverage := flag.Bool("debugCoverage", false, "debug coverage matrix")
 	debugDLX := flag.Bool("debugDLX", false, "debug DLX algorithm")
 	show := flag.Bool("show", false, "print available pieces and quit")
+	nochiral := flag.Bool("nochiral", false, "do not include the chiral reflections")
 
 	flag.Usage = func() {
 		f := flag.CommandLine.Output()
@@ -83,7 +84,7 @@ func main() {
 	}
 	flag.Parse()
 
-	game.LoadPieces(*pieces)
+	game.LoadPieces(*pieces, !*nochiral)
 	if *show {
 		for _, piece := range game.AllPieces() {
 			fmt.Println(piece)
