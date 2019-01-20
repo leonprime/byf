@@ -10,7 +10,7 @@ color 5D4037
 █.
 piece o
 rotate 0
-color d32f2f
+color D32F2F
 █
 piece O
 rotate 0
@@ -73,12 +73,6 @@ color 1A237E
 █..
 █..
 ███
-piece V
-rotate 4
-color 1A237E
-..█
-..█
-███
 piece r
 rotate 4
 color 388E3C
@@ -87,7 +81,7 @@ color 388E3C
 ██
 piece r
 rotate 4
-color F57C00
+color 388E3C
 .█
 .█
 ██

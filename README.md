@@ -24,21 +24,24 @@ pieces available, but the largest 3D game is only 45 unit cubes.
 
 This program uses Knuth's techniques to generate all 2D and 3D tiling games.
 
-## The program
-
-TODO: words about the program
-
 ## Pieces
 
-TODO: words about the pieces and describe them somehow
+To see the available pieces,
+
+    ./byf -show
+
+The game comes with the pieces specified by `ooOvVzZiiIlLnpstrY`.
+
+Use the `-pieces` argument to point to a different data file.  Pentominos are
+provided in `data/pentominoes.txt`.
 
 ## Examples
 
 ### Put the game away
 
 Solving the 5x13 tiling is straightforward.  We choose 65 unit cubes by tossing
-out the `i` piece.  The number of solutions is huge, so we only pick a small
-sample,
+out the `i` piece.  The number of solutions is huge, so we limit the number of
+solutions to the first 10 found,
 
     ./byf -max 10 5 13 ooOvVzZiIlLnpstrY
 

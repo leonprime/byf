@@ -1,0 +1,111 @@
+piece F
+rotate 4
+color D32F2F
+.██
+██.
+.█.
+piece F
+rotate 4
+color D32F2F
+██.
+.██
+.█.
+piece I
+rotate 2
+color FF9800
+█
+█
+█
+█
+█
+piece L
+rotate 4
+color F57C00
+█.
+█.
+█.
+██
+piece L
+rotate 4
+color F57C00
+.█
+.█
+.█
+██
+piece N
+rotate 4
+color 8E24AA
+██..
+.███
+piece N
+rotate 4
+color 8E24AA
+..██
+███.
+piece P
+rotate 4
+color EC407A
+██
+██
+█.
+piece P
+rotate 4
+color EC407A
+██
+██
+.█
+piece T
+rotate 4
+color 4DB6AC
+███
+.█.
+.█.
+piece U
+rotate 4
+color FFD600
+███
+█.█
+piece V
+rotate 4
+color 1A237E
+█..
+█..
+███
+piece W
+rotate 4
+color 388E3C
+..█
+.██
+██.
+piece X
+rotate 0
+color 1A237E
+.█.
+███
+.█.
+piece Y
+rotate 4
+color 5D4037
+.█
+██
+.█
+.█
+piece Y
+rotate 4
+color 5D4037
+█.
+██
+█.
+█.
+piece Z
+rotate 2
+color 4DB6AC
+██.
+.█.
+.██
+piece Z
+rotate 2
+color 4DB6AC
+.██
+.█.
+██.
