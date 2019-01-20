@@ -16,18 +16,20 @@ const (
 
 var borderColor = color.RGBA{0xBD, 0xBD, 0xBD, 0xBD}
 
-func width(cols int) int {
+// converts game w to img w
+func imgw(cols int) int {
 	return tile*cols + pad*(cols+1)
 }
 
-func height(rows int) int {
+// converts game h to img h
+func imgh(rows int) int {
 	return tile*rows + pad*(rows+1)
 }
 
-// returns the tile rectangle given board coords
-func tileRect(x, y int) Rectangle {
-	x0 := width(x)
-	y0 := height(y)
+// returns an img rectangle given board coords
+func imgRect(x, y int) Rectangle {
+	x0 := imgw(x)
+	y0 := imgh(y)
 	return Rect(x0, y0, x0+tile, y0+tile)
 }
 
@@ -35,7 +37,7 @@ func tileRect(x, y int) Rectangle {
 // renders the board to a png
 func Render(w, h int, plays []*Play, out io.Writer) {
 	g := &Graf{
-		img: NewRGBA(Rect(0, 0, width(w), height(h))),
+		img: NewRGBA(Rect(0, 0, imgw(w), imgh(h))),
 	}
 	g.drawGrid()
 	for _, play := range plays {
@@ -157,7 +159,7 @@ func eachTile(play *Play, c color.Color, draw func(Rectangle, color.Color, edges
 				if play.Grid.IsSet(x+1, y) {
 					b.r = false
 				}
-				t := tileRect(play.X+x, play.Y+y)
+				t := imgRect(play.X+x, play.Y+y)
 				draw(t, c, b)
 			}
 		}

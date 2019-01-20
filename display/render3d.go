@@ -7,11 +7,11 @@ import (
 	. "torres.guru/gagne/game"
 )
 
-// we're laying out z dimension as additional grids going down
+// lay out the z dimension as additional grids going down
 // this returns height of image in that representation
 // we'll separate the grids by one tile of spacing
-func height3D(h, d int) int {
-	return d*height(h) + (d-1)*tile
+func imgh3D(h, d int) int {
+	return d*imgh(h) + (d-1)*tile
 }
 
 // returns the image y at the grid (y, z) with height h in our flat representation
@@ -20,15 +20,15 @@ func y3D(h, y, z int) int {
 	return tile*stride + pad*(stride+1)
 }
 
-func tileRect3D(h, x, y, z int) Rectangle {
-	x0 := width(x)
+func imgRect3D(h, x, y, z int) Rectangle {
+	x0 := imgw(x)
 	y0 := y3D(h, y, z)
 	return Rect(x0, y0, x0+tile, y0+tile)
 }
 
 func Render3D(w, h, d int, plays []*Play3D, out io.Writer) {
 	g := &Graf{
-		img: NewRGBA(Rect(0, 0, width(w), height3D(h, d))),
+		img: NewRGBA(Rect(0, 0, imgw(w), imgh3D(h, d))),
 	}
 	g.drawGrid3D(h, d)
 	for _, play := range plays {
@@ -77,7 +77,7 @@ func eachTile3D(h int, play *Play3D, c color.Color, draw func(Rectangle, color.C
 					if play.Grid.IsSet(x+1, y, z) {
 						b.r = false
 					}
-					t := tileRect3D(h, play.X+x, play.Y+y, play.Z+z)
+					t := imgRect3D(h, play.X+x, play.Y+y, play.Z+z)
 					draw(t, c, b)
 				}
 			}
