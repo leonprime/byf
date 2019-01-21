@@ -29,7 +29,8 @@ game that uses as many as the pieces as possible.  There are 67 unit cubes of
 pieces available, but the largest 3D game is only 45 unit cubes.
 
 This program is an implementation of Knuth's techniques to generate solutions
-for all 2D and 3D tiling games over a given set of pieces.
+for all 2D and 3D tiling games over a given set of pieces.  It is then used to
+correct these omissions for fun.
 
 ## Pieces
 
@@ -60,3 +61,28 @@ a sample of solutions as follows,
 
     ./byf -max 10 4 4 4 oOvVzZiIlLnpstrY
 
+### Verify pentominoes
+
+On the [wiki for pentominoes](https://en.wikipedia.org/wiki/Pentomino), a number
+of 2D and 3D solutions are provided.  Let's verify that this program can
+generate some.  To do this, we change the data file using the `pieces` argument.
+
+#### 2D pentominoes
+
+We can count and verify all 2 solutions to the 3x20 case.
+
+    ./byf -pieces data/pentominoes.txt 20 3 FILNPTUVWXYZ
+    game "20x3_FILNPTUVWXYZ" has 8 solutions
+        time taken: 105.598042ms
+        steps: 461658
+    wrote all 8 solutions to ./solutions/20x3_FILNPTUVWXYZ
+
+We obtain 8 solutions because the chiral pieces were included, meaning we count the mirror images of piece F, P, L, etc.  To leave them out, we can use the `-nochiral` argument,
+
+    ./byf -pieces data/pentominoes.txt -nochiral 20 3 FILNPTUVWXYZ
+    game "20x3_FILNPTUVWXYZ" has 4 solutions
+        time taken: 11.440136ms
+        steps: 58022
+    wrote all 4 solutions to ./solutions/20x3_FILNPTUVWXYZ
+
+Visually inspection will confirm that there are 2 unique solutions and each has a duplicate rotated 180 degrees.
