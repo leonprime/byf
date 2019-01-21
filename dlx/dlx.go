@@ -35,14 +35,14 @@ type DancingLinks struct {
 	root      *Column
 	o         []*Node
 	Solutions []Solution
-	max       int  // max solutions to search for (0 is all)
-	N, S      int  // number of solutions found and steps taken
-	countOnly bool // don't record Solutions, just count them
+	max       int // max solutions to search for (0 is all)
+	nprint    int // max solutions to print
+	N, S      int // number of solutions found and steps taken
 }
 
 // given a boolean matrix, builds the corresponding dancing links cover matrix A
 // for use in DLX search algorithm
-func New(matrix [][]bool, columnNames []string, max int, countOnly bool) *DancingLinks {
+func New(matrix [][]bool, columnNames []string, max, nprint int) *DancingLinks {
 	w, h := len(matrix[0]), len(matrix)
 	if len(columnNames) != w {
 		panic("number of column names doesn't match number of matrix columns")
@@ -135,7 +135,7 @@ func New(matrix [][]bool, columnNames []string, max int, countOnly bool) *Dancin
 		rowh[y].L = nil
 	}
 
-	dl := &DancingLinks{root: root, max: max, countOnly: countOnly}
+	dl := &DancingLinks{root: root, max: max, nprint: nprint}
 	if debug {
 		fmt.Println(dl)
 	}
@@ -274,7 +274,7 @@ func (dl *DancingLinks) printSolution() {
 	if dl.N%1000 == 0 {
 		fmt.Printf("\rfound %d solutions", dl.N)
 	}
-	if dl.countOnly {
+	if dl.N > dl.nprint {
 		return
 	}
 	soln := Solution{}

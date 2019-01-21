@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/lprime/byf/display"
-	"github.com/lprime/byf/dlx"
-	"github.com/lprime/byf/game"
+	"github.com/leonprime/byf/display"
+	"github.com/leonprime/byf/dlx"
+	"github.com/leonprime/byf/game"
 	"io"
 	"os"
 	"strconv"
@@ -59,8 +59,7 @@ func (g *Game3D) String() string {
 }
 
 func main() {
-	countOnly := flag.Bool("count", false, "don't print, just count solutions")
-	max := flag.Int("max", 0, "maximum number of solutions to find.  the default, 0, means find all solutions")
+	max := flag.Int("max", 0, "max solutions to find.  0 means find all (default 0)")
 	nprint := flag.Int("print", 10, "number of solutions to print")
 	path := flag.String("path", ".", "output path for game solutions.")
 	pieces := flag.String("pieces", "data/gagne.txt", "path to pieces data file")
@@ -152,14 +151,14 @@ func main() {
 	} else {
 		g = &Game3D{w: w, h: h, d: d, pieceSpec: pieceSpec}
 	}
-	run(g, *path, *nprint, *max, *countOnly)
+	run(g, *path, *nprint, *max)
 }
 
-func run(g Game, path string, nprint, max int, countOnly bool) {
+func run(g Game, path string, nprint, max int) {
 	cov := g.Coverage()
 	renderDebugs(cov.Debugs, g.String(), path)
 
-	dl := dlx.New(cov.M.Cells, cov.Columns, max, countOnly)
+	dl := dlx.New(cov.M.Cells, cov.Columns, max, nprint)
 	t := time.Now()
 	dl.Search(0)
 	dur := time.Now().Sub(t)
@@ -170,7 +169,7 @@ func run(g Game, path string, nprint, max int, countOnly bool) {
 	fmt.Printf("game \"%s\" has %d solutions\n", g, dl.N)
 	fmt.Printf("\ttime taken: %s\n", dur)
 	fmt.Printf("\tsteps: %d\n", dl.S)
-	if dl.N == 0 || countOnly {
+	if len(dl.Solutions) == 0 {
 		return
 	}
 
@@ -178,23 +177,20 @@ func run(g Game, path string, nprint, max int, countOnly bool) {
 	os.RemoveAll(gamePath)
 	os.MkdirAll(gamePath, os.ModePerm)
 
-	if dl.N < nprint {
-		nprint = dl.N
-	}
-	for i := 0; i < nprint; i++ {
+	for i, solution := range dl.Solutions {
 		filename := fmt.Sprintf("%s/%d.png", gamePath, i)
 		f, err := os.Create(filename)
 		if err != nil {
 			panic(err)
 		}
-		g.Render(f, dl.Solutions[i])
+		g.Render(f, solution)
 		f.Close()
 	}
 	quant := "the first"
 	if dl.N == nprint {
 		quant = "all"
 	}
-	fmt.Printf("wrote %s %d solutions to %s\n", quant, nprint, gamePath)
+	fmt.Printf("wrote %s %d solutions to %s\n", quant, len(dl.Solutions), gamePath)
 }
 
 func renderDebugs(debugs []*game.Debug, gameName, path string) {

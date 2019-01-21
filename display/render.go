@@ -1,7 +1,7 @@
 package display
 
 import (
-	. "github.com/lprime/byf/game"
+	. "github.com/leonprime/byf/game"
 	. "image"
 	"image/color"
 	"image/png"

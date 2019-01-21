@@ -23,10 +23,10 @@ dividers and cards that provide piece selections for games up to 6x5 in size.
 ## The motivation
 
 What the manual doesn't list are all the possible tiling games and what pieces
-would form a viable solution set for them.  One notable omission is that it
+would form a viable solution set for them.  One glaring omission is that it
 lacks a reference solution to the entire 5x13 game board, which can be handy
-when putting the game away.  Another glaring omission is the lack of a 3D tiling
-game that uses as many as the pieces as possible.  There are 67 unit cubes of
+when putting the game away.  Another is the lack of a 3D tiling
+game that uses as many of the pieces as possible.  There are 67 unit cubes of
 pieces available, but the largest 3D game is only 45 unit cubes.
 
 This program is an implementation of Knuth's techniques to generate solutions
@@ -51,7 +51,8 @@ Use the `-pieces` argument to point to a different data file.
 ### Put the game away
 
 Solving the 5x13 tiling is straightforward.  We choose 65 unit cubes by tossing
-out one of the the `i` piece.  The number of solutions is huge, so we limit the number of solutions to the first one found,
+out one of the the `i` piece.  The number of solutions is huge, so we limit the
+number of solutions to the first one found,
 
     ./byf -max 1 13 5 ooOvVzZiIlLnpstrY
 
@@ -60,9 +61,13 @@ out one of the the `i` piece.  The number of solutions is huge, so we limit the 
 ### Largest cube
 
 64 unit cubes can be used to build a 4x4x4 cube.  We just need to toss out 3
-unit cubes of pieces, which can be the duplicate `o` and `i` pieces.
+unit cubes of pieces, which can be the duplicate `o` and `i` pieces.  To see
+if it's possible, let's print some solutions,
 
-    ./byf -max 10 4 4 4 oOvVzZiIlLnpstrY
+    ./byf 4 4 4 oOvVzZiIlLnpstrY
+
+There's a lot of solutions, so this will take awhile.  TODO XXX specify how
+much.  Press `CTRL-C` to interrupt and print the solutions it found so far,
 
 ### Verify pentominoes
 
@@ -100,19 +105,19 @@ Here, we render one solution for 5x12 and visually confirm it,
 
 #### 3D pentominoes
 
-We can verify the solution counts match with `-count` and dividing by the 8-fold symmetry.
+We can verify the solution counts match by dividing by the 8-fold symmetry.
 
-    ./byf -pieces data/pentominoes.txt -count 2 3 10 FILNPTUVWXYZ
+    ./byf -print 0 -pieces data/pentominoes.txt 2 3 10 FILNPTUVWXYZ
     game "2x3x10_FILNPTUVWXYZ" has 96 solutions
         time taken: 1.601036413s
         steps: 7089848
 
-    ./byf -pieces data/pentominoes.txt -count 2 5 6 FILNPTUVWXYZ
+    ./byf -print 0 -pieces data/pentominoes.txt 2 5 6 FILNPTUVWXYZ
     game "2x5x6_FILNPTUVWXYZ" has 2112 solutions
         time taken: 13.341344262s
         steps: 47928520
 
-    ./byf -pieces data/pentominoes.txt -count 3 4 5 FILNPTUVWXYZ
+    ./byf -print 0 -pieces data/pentominoes.txt 3 4 5 FILNPTUVWXYZ
     game "3x4x5_FILNPTUVWXYZ" has 31520 solutions
         time taken: 2m27.858245257s
         steps: 647787028
