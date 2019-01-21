@@ -8,6 +8,7 @@ import (
 	"github.com/leonprime/byf/game"
 	"io"
 	"os"
+	"os/signal"
 	"strconv"
 	"time"
 )
@@ -159,20 +160,34 @@ func run(g Game, path string, nprint, max int) {
 	renderDebugs(cov.Debugs, g.String(), path)
 
 	dl := dlx.New(cov.M.Cells, cov.Columns, max, nprint)
-	t := time.Now()
-	dl.Search(0)
-	dur := time.Now().Sub(t)
 
+	start := time.Now()
+
+	// print if interrupted
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		<-c
+		printSolutions(g, dl, path, nprint, start)
+		os.Exit(0)
+	}()
+
+	dl.Search(0)
+
+	printSolutions(g, dl, path, nprint, start)
+}
+
+func printSolutions(g Game, dl *dlx.DancingLinks, path string, nprint int, start time.Time) {
 	if dl.N >= 1000 {
 		fmt.Print("\r") // clear out the count feedback
 	}
-	fmt.Printf("game \"%s\" has %d solutions\n", g, dl.N)
-	fmt.Printf("\ttime taken: %s\n", dur)
+	fmt.Printf("found %d solutions for game \"%s\"\n", dl.N, g)
+	fmt.Printf("\ttime taken: %s\n", time.Now().Sub(start))
 	fmt.Printf("\tsteps: %d\n", dl.S)
+
 	if len(dl.Solutions) == 0 {
 		return
 	}
-
 	gamePath := fmt.Sprintf("%s/solutions/%s", path, g)
 	os.RemoveAll(gamePath)
 	os.MkdirAll(gamePath, os.ModePerm)

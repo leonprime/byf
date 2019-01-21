@@ -66,8 +66,8 @@ if it's possible, let's print some solutions,
 
     ./byf 4 4 4 oOvVzZiIlLnpstrY
 
-There's a lot of solutions, so this will take awhile.  TODO XXX specify how
-much.  Press `CTRL-C` to interrupt and print the solutions it found so far,
+There's a lot of solutions, so this will take awhile.  Press `CTRL-C` to
+interrupt and print the solutions found so far,
 
 ### Verify pentominoes
 
@@ -81,7 +81,7 @@ We can count and verify the 2 solutions to the 3x20 case.  We'll lay it out as
 20x3 so the output is horizontal.
 
     ./byf -pieces data/pentominoes.txt 20 3 FILNPTUVWXYZ
-    game "20x3_FILNPTUVWXYZ" has 8 solutions
+    found 8 solutions for game "20x3_FILNPTUVWXYZ"
         time taken: 105.598042ms
         steps: 461658
     wrote all 8 solutions to ./solutions/20x3_FILNPTUVWXYZ
@@ -89,7 +89,7 @@ We can count and verify the 2 solutions to the 3x20 case.  We'll lay it out as
 There are 8 solutions because the chiral pieces were included, meaning we count the mirror images of piece F, P, L, etc.  To leave them out, we can use the `-nochiral` argument,
 
     ./byf -pieces data/pentominoes.txt -nochiral 20 3 FILNPTUVWXYZ
-    game "20x3_FILNPTUVWXYZ" has 4 solutions
+    found 4 solutions for game "20x3_FILNPTUVWXYZ"
         time taken: 11.440136ms
         steps: 58022
     wrote all 4 solutions to ./solutions/20x3_FILNPTUVWXYZ
@@ -108,16 +108,16 @@ Here, we render one solution for 5x12 and visually confirm it,
 We can verify the solution counts match by dividing by the 8-fold symmetry.
 
     ./byf -print 0 -pieces data/pentominoes.txt 2 3 10 FILNPTUVWXYZ
-    game "2x3x10_FILNPTUVWXYZ" has 96 solutions
+    found 96 solutions for game "2x3x10_FILNPTUVWXYZ"
         time taken: 1.601036413s
         steps: 7089848
 
     ./byf -print 0 -pieces data/pentominoes.txt 2 5 6 FILNPTUVWXYZ
-    game "2x5x6_FILNPTUVWXYZ" has 2112 solutions
+    found 2112 solutions for game "2x5x6_FILNPTUVWXYZ"
         time taken: 13.341344262s
         steps: 47928520
 
     ./byf -print 0 -pieces data/pentominoes.txt 3 4 5 FILNPTUVWXYZ
-    game "3x4x5_FILNPTUVWXYZ" has 31520 solutions
+    found 31520 solutions for game "3x4x5_FILNPTUVWXYZ"
         time taken: 2m27.858245257s
         steps: 647787028

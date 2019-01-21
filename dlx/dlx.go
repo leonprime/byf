@@ -150,7 +150,7 @@ func (dl *DancingLinks) Search(k int) {
 	}
 	dl.S++
 	if dl.root.R == &dl.root.Node {
-		dl.printSolution()
+		dl.recordSolution()
 		return
 	}
 	if dl.max > 0 && dl.N >= dl.max {
@@ -250,7 +250,7 @@ func (dl *DancingLinks) String() string {
 	return s.String()
 }
 
-func (dl *DancingLinks) printSolution() {
+func (dl *DancingLinks) recordSolution() {
 	if debug {
 		var buf bytes.Buffer
 		buf.WriteString("========\n")
