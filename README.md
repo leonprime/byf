@@ -1,11 +1,12 @@
 # Beat Your Father with DLX
 
-An application of Knuth's Dancing Links paper to a particular 2D and 3D tiling
+An application of Knuth's Dancing Links lecture to a particular 2D and 3D tiling
 game named **Beat Your Father**.
 
-## The paper
+## The lecture
 
-https://arxiv.org/abs/cs/0011047
+* https://www.youtube.com/watch?v=t9OcDYfHqOk
+* https://arxiv.org/abs/cs/0011047
 
 ## The game
 
@@ -67,11 +68,12 @@ unit cubes of pieces, which can be the duplicate `o` and `i` pieces.
 
 On the [wiki for pentominoes](https://en.wikipedia.org/wiki/Pentomino), a number
 of 2D and 3D solutions are provided.  Let's verify that this program can
-generate some.  To do this, we change the data file using the `pieces` argument.
+generate the same results.
 
 #### 2D pentominoes
 
-We can count and verify all 2 solutions to the 3x20 case.
+We can count and verify the 2 solutions to the 3x20 case.  We'll lay it out as
+20x3 so the output is horizontal.
 
     ./byf -pieces data/pentominoes.txt 20 3 FILNPTUVWXYZ
     game "20x3_FILNPTUVWXYZ" has 8 solutions
@@ -79,7 +81,7 @@ We can count and verify all 2 solutions to the 3x20 case.
         steps: 461658
     wrote all 8 solutions to ./solutions/20x3_FILNPTUVWXYZ
 
-We obtain 8 solutions because the chiral pieces were included, meaning we count the mirror images of piece F, P, L, etc.  To leave them out, we can use the `-nochiral` argument,
+There are 8 solutions because the chiral pieces were included, meaning we count the mirror images of piece F, P, L, etc.  To leave them out, we can use the `-nochiral` argument,
 
     ./byf -pieces data/pentominoes.txt -nochiral 20 3 FILNPTUVWXYZ
     game "20x3_FILNPTUVWXYZ" has 4 solutions
@@ -87,4 +89,23 @@ We obtain 8 solutions because the chiral pieces were included, meaning we count 
         steps: 58022
     wrote all 4 solutions to ./solutions/20x3_FILNPTUVWXYZ
 
-Visually inspection will confirm that there are 2 unique solutions and each has a duplicate rotated 180 degrees.
+Visual inspection will confirm that there are 2 unique solutions and each has a duplicate rotated 180 degrees.
+
+#### 3D pentominoes
+
+We can verify the solution counts match with `-count` and dividing by the 8-fold symmetry.
+
+    ./byf -pieces data/pentominoes.txt -count 2 3 10 FILNPTUVWXYZ
+    game "2x3x10_FILNPTUVWXYZ" has 96 solutions
+        time taken: 1.601036413s
+        steps: 7089848
+
+    ./byf -pieces data/pentominoes.txt -count 2 5 6 FILNPTUVWXYZ
+    game "2x5x6_FILNPTUVWXYZ" has 2112 solutions
+        time taken: 13.341344262s
+        steps: 47928520
+
+    ./byf -pieces data/pentominoes.txt -count 3 4 5 FILNPTUVWXYZ
+    game "3x4x5_FILNPTUVWXYZ" has 31520 solutions
+        time taken: 2m27.858245257s
+        steps: 647787028

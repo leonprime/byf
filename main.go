@@ -164,6 +164,9 @@ func run(g Game, path string, nprint, max int, countOnly bool) {
 	dl.Search(0)
 	dur := time.Now().Sub(t)
 
+	if dl.N >= 1000 {
+		fmt.Print("\r") // clear out the count feedback
+	}
 	fmt.Printf("game \"%s\" has %d solutions\n", g, dl.N)
 	fmt.Printf("\ttime taken: %s\n", dur)
 	fmt.Printf("\tsteps: %d\n", dl.S)
