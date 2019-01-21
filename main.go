@@ -3,13 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/lprime/byf/display"
+	"github.com/lprime/byf/dlx"
+	"github.com/lprime/byf/game"
 	"io"
 	"os"
 	"strconv"
 	"time"
-	"torres.guru/gagne/display"
-	"torres.guru/gagne/dlx"
-	"torres.guru/gagne/game"
 )
 
 type Game interface {

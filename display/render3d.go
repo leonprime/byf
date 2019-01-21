@@ -1,10 +1,10 @@
 package display
 
 import (
+	. "github.com/lprime/byf/game"
 	. "image"
 	"image/color"
 	"io"
-	. "torres.guru/gagne/game"
 )
 
 // lay out the z dimension as additional grids going down

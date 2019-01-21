@@ -1,11 +1,11 @@
 package display
 
 import (
+	. "github.com/lprime/byf/game"
 	. "image"
 	"image/color"
 	"image/png"
 	"io"
-	. "torres.guru/gagne/game"
 )
 
 const (
