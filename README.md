@@ -1,7 +1,7 @@
-# DLX Beat Your Father
+# Beat Your Father with DLX
 
 An application of Knuth's Dancing Links paper to a particular 2D and 3D tiling
-game.
+game named **Beat Your Father**.
 
 ## The paper
 
@@ -38,26 +38,28 @@ To see the available pieces,
 
     ./byf -show
 
-The game comes with the pieces specified by `ooOvVzZiiIlLnpstrY`.
+The default pieces are for the **Beat Your Father** game, which comes with the
+pieces `ooOvVzZiiIlLnpstrY`.  Most games are played with some subset of this.
 
-Use the `-pieces` argument to point to a different data file.  Pentominos are
-provided in `data/pentominoes.txt`.
+Pentominos are provided in `data/pentominoes.txt` and are numbered `FILNPTUVWXYZ`.
+
+Use the `-pieces` argument to point to a different data file.
 
 ## Examples
 
 ### Put the game away
 
 Solving the 5x13 tiling is straightforward.  We choose 65 unit cubes by tossing
-out the `i` piece.  The number of solutions is huge, so we limit the number of
-solutions to the first 10 found,
+out one of the the `i` piece.  The number of solutions is huge, so we limit the number of solutions to the first one found,
 
-    ./byf -max 10 5 13 ooOvVzZiIlLnpstrY
+    ./byf -max 1 13 5 ooOvVzZiIlLnpstrY
+
+![A solution to 13x5 Beat Your Father](./docs/13x5_ooOvVzZiIlLnpstrY/0.png "Logo Title Text 1")
 
 ### Largest cube
 
 64 unit cubes can be used to build a 4x4x4 cube.  We just need to toss out 3
-unit cubes of pieces, which can be the `o` and `i` pieces. Then we can generate
-a sample of solutions as follows,
+unit cubes of pieces, which can be the duplicate `o` and `i` pieces.
 
     ./byf -max 10 4 4 4 oOvVzZiIlLnpstrY
 
