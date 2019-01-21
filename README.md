@@ -1,12 +1,12 @@
 # Beat Your Father with DLX
 
-An application of Knuth's Dancing Links lecture to a particular 2D and 3D tiling
+An application of Knuth's Dancing Links algorithm to a particular 2D and 3D tiling
 game named **Beat Your Father**.
 
-## The lecture
+## The technique
 
-* https://www.youtube.com/watch?v=t9OcDYfHqOk
 * https://arxiv.org/abs/cs/0011047
+* https://www.youtube.com/watch?v=t9OcDYfHqOk
 
 ## The game
 
@@ -90,6 +90,13 @@ There are 8 solutions because the chiral pieces were included, meaning we count 
     wrote all 4 solutions to ./solutions/20x3_FILNPTUVWXYZ
 
 Visual inspection will confirm that there are 2 unique solutions and each has a duplicate rotated 180 degrees.
+
+Here, we render one solution for 5x12 and visually confirm it,
+
+    ./byf -pieces data/pentominoes.txt -max 1 12 5 FILNPTUVWXYZ
+
+
+![A solution to 12x5 pentominoes](./docs/12x5_FILNPTUVWXYZ/0.png "Logo Title Text 1")
 
 #### 3D pentominoes
 
