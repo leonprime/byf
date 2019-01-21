@@ -60,17 +60,3 @@ a sample of solutions as follows,
 
     ./byf -max 10 4 4 4 oOvVzZiIlLnpstrY
 
-### Torture your friend
-
-Want to test the strength of a friendship?  Let's find some set of pieces for a
-tiling puzzle that doesn't have a solution.
-
-TODO: mechanism
-
-### Hardest puzzle
-
-Bigger puzzles are more likely to have a solution for any subset of pieces, but
-we can still find the *hardest* puzzle simply by looking for a set of pieces
-that produce the smallest number of solutions.
-
-TODO: this
